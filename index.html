@@ -1,0 +1,954 @@
+<title>Programme scientifique FAP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: navy masthead + day tabs; admin = left rail navigation and a 5-column time grid (time vertical, rooms horizontal), public = editorial programme views */
+:root{
+  --navy:#142B49; --royal:#2855A6; --teal:#00A6A6; --gold:#C9A45C;
+  --bg:#F4F6F9; --surface:#FFFFFF; --ink:#16202E; --muted:#5A6678; --line:#DDE3EC; --grid:#EEF1F6; --soft:#E8EEF8;
+  --c-lectures:#2855A6; --c-panel:#6B3FA0; --c-workshop:#00898A; --c-symposium:#A8833A; --c-break:#7D8799; --c-ceremony:#142B49;
+  --t-lectures:#E6EDFA; --t-panel:#EFE7F8; --t-workshop:#DDF3F3; --t-symposium:#F7EFDD; --t-break:#EEF0F3; --t-ceremony:#DCE2EC;
+  --crit:#B42318; --crit-soft:#FDE8E6; --warn:#946200; --warn-soft:#FBF0D6; --ok:#17734A; --ok-soft:#DDF2E7;
+  --f-display:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-ui:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --ppm:1.35px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D1522;--surface:#152132;--ink:#E3E9F2;--muted:#9AA7BA;--line:#27364B;--grid:#1A283B;--soft:#1D2D45;
+  --c-lectures:#7EA2EC;--c-panel:#BC9AE6;--c-workshop:#4FD0D0;--c-symposium:#DDBB78;--c-break:#9AA4B5;--c-ceremony:#AFC3E2;
+  --t-lectures:#1C2E4F;--t-panel:#2A2142;--t-workshop:#123638;--t-symposium:#3A2F18;--t-break:#1F2836;--t-ceremony:#1C2A40;
+  --crit:#F3A39C;--crit-soft:#3E1A17;--warn:#EDC56A;--warn-soft:#3A2D10;--ok:#86D3A9;--ok-soft:#163223;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1522;--surface:#152132;--ink:#E3E9F2;--muted:#9AA7BA;--line:#27364B;--grid:#1A283B;--soft:#1D2D45;
+  --c-lectures:#7EA2EC;--c-panel:#BC9AE6;--c-workshop:#4FD0D0;--c-symposium:#DDBB78;--c-break:#9AA4B5;--c-ceremony:#AFC3E2;
+  --t-lectures:#1C2E4F;--t-panel:#2A2142;--t-workshop:#123638;--t-symposium:#3A2F18;--t-break:#1F2836;--t-ceremony:#1C2A40;
+  --crit:#F3A39C;--crit-soft:#3E1A17;--warn:#EDC56A;--warn-soft:#3A2D10;--ok:#86D3A9;--ok-soft:#163223;color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--f-ui);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:#142B49}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--royal);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:12.5px} .tiny{font-size:11.5px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap} .spacer{flex:1}
+.stack{display:flex;flex-direction:column;gap:12px}
+
+/* masthead */
+.mast{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:#142B49;color:#fff;
+  margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))) calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+  padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+.mast-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:14px;min-height:58px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand svg{width:30px;height:30px}
+.brand b{font-family:var(--f-display);font-size:18px;font-weight:600;letter-spacing:.01em}
+.brand span{display:block;font-size:11.5px;opacity:.75;letter-spacing:.06em;text-transform:uppercase}
+.modes{display:flex;gap:4px;background:rgba(255,255,255,.08);border-radius:8px;padding:3px}
+.modes button{border:0;background:none;color:#fff;opacity:.75;padding:7px 14px;border-radius:6px;cursor:pointer;font-weight:500}
+.modes button[aria-current="true"]{background:#fff;color:#142B49;opacity:1}
+.demo{font-size:11.5px;background:#C9A45C;color:#142B49;font-weight:600;padding:3px 9px;border-radius:99px;letter-spacing:.03em}
+
+.wrap{max-width:1440px;margin:18px auto 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;min-width:0}
+.btn{border:1px solid transparent;border-radius:7px;padding:8px 16px;font-weight:500;cursor:pointer;background:var(--royal);color:#fff;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none}
+.btn:hover{filter:brightness(1.08)} .btn:disabled{opacity:.45;cursor:default;filter:none}
+.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn.subtle{background:transparent;color:var(--royal);padding-inline:8px}
+.btn.danger{background:var(--crit);color:#fff}
+.btn.gold{background:var(--gold);color:#142B49}
+.btn.sm{padding:5px 11px;font-size:13px}
+.in,.sel,.ta{border:1px solid var(--line);border-radius:7px;padding:8px 10px;background:var(--surface);width:100%;min-width:0}
+.ta{resize:vertical;line-height:1.5}
+.lbl{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:.01em}
+.req{color:var(--crit)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:12px}
+.chk{display:flex;gap:8px;align-items:center;cursor:pointer}
+.chk input{accent-color:var(--royal);width:16px;height:16px}
+
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:2px 9px;font-size:11.5px;font-weight:600;white-space:nowrap;letter-spacing:.01em}
+.st-brouillon{background:var(--grid);color:var(--muted)} .st-en_preparation{background:var(--soft);color:var(--royal)} .st-a_valider{background:var(--warn-soft);color:var(--warn)}
+.st-valide{background:#DDF3F3;color:#006B6B} .st-publie{background:var(--ok-soft);color:var(--ok)} .st-modifie{background:#FFE8CC;color:#9A4A00}
+.st-annule{background:var(--crit-soft);color:var(--crit)} .st-archive{background:var(--grid);color:var(--muted);text-decoration:line-through}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .st-valide{background:#123638;color:#4FD0D0}:root:not([data-theme="light"]) .st-modifie{background:#3D2A12;color:#F2B46B}}
+:root[data-theme="dark"] .st-valide{background:#123638;color:#4FD0D0} :root[data-theme="dark"] .st-modifie{background:#3D2A12;color:#F2B46B}
+.ty{font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+.issue-c{color:var(--crit)} .issue-a{color:var(--warn)}
+.notice{border-radius:8px;padding:10px 14px;font-size:13.5px}
+.notice.crit{background:var(--crit-soft);color:var(--crit)} .notice.warn{background:var(--warn-soft);color:var(--warn)} .notice.info{background:var(--soft)} .notice.ok{background:var(--ok-soft);color:var(--ok)}
+
+/* admin shell */
+.admin{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:980px){.admin{grid-template-columns:1fr}}
+.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);display:flex;flex-direction:column;gap:2px}
+@media (max-width:980px){.rail{position:static;flex-direction:row;overflow-x:auto;max-width:100%}}
+.rail button{border:0;background:none;text-align:left;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:500;display:flex;gap:8px;align-items:center;white-space:nowrap}
+.rail button[aria-current="true"]{background:var(--surface);color:var(--ink);box-shadow:inset 3px 0 0 var(--royal)}
+.rail .who{padding:10px 12px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);margin-top:10px}
+@media (max-width:980px){.rail .who{display:none}}
+.badge{margin-left:auto;background:var(--crit);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;font-weight:600}
+.h1{font-family:var(--f-display);font-size:26px;font-weight:600}
+.eyebrow{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* day tabs */
+.daytabs{display:flex;gap:6px;flex-wrap:wrap}
+.daytabs button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 14px;cursor:pointer;text-align:left}
+.daytabs button b{display:block;font-weight:600;font-size:14px}
+.daytabs button span{font-size:12px;color:var(--muted)}
+.daytabs button[aria-pressed="true"]{border-color:var(--royal);box-shadow:inset 0 -3px 0 var(--royal)}
+
+/* builder grid */
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.gridwrap{overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;max-height:calc(100vh - 230px);position:relative}
+.tg{display:grid;grid-template-columns:58px repeat(var(--cols),minmax(170px,1fr));min-width:calc(58px + var(--cols) * 170px);position:relative}
+.tg-head{position:sticky;top:0;z-index:6;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 10px 8px;font-weight:600;font-size:13.5px}
+.tg-head small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+.tg-head.main{box-shadow:inset 0 3px 0 var(--gold)}
+.tg-corner{position:sticky;left:0;top:0;z-index:8;background:var(--surface);border-bottom:1px solid var(--line)}
+.tg-times{position:sticky;left:0;z-index:5;background:var(--surface);border-right:1px solid var(--line)}
+.tg-times span{position:absolute;right:8px;transform:translateY(-50%);font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.tg-col{position:relative;border-right:1px solid var(--line);background-image:linear-gradient(var(--grid) 1px,transparent 1px);background-size:100% calc(var(--ppm) * 30)}
+.tg-col:last-child{border-right:0}
+.tg-col.drop{background-color:var(--soft)}
+.blk-closed{position:absolute;left:0;right:0;z-index:1;background:repeating-linear-gradient(-45deg,transparent 0 7px,rgba(125,135,153,.16) 7px 14px);border-block:1px dashed var(--c-break);display:flex;align-items:flex-start;justify-content:center;padding-top:10px;font-size:11.5px;color:var(--muted);text-align:center;pointer-events:none}
+.ev{position:absolute;left:4px;right:4px;z-index:2;border-radius:7px;padding:5px 8px 5px 10px;overflow:hidden;cursor:pointer;border:1px solid transparent;background:var(--tint);color:var(--ink);box-shadow:inset 3px 0 0 var(--accent);display:flex;flex-direction:column;gap:2px;user-select:none;touch-action:none}
+.ev:hover{border-color:var(--accent)}
+.ev .ty{color:var(--accent)}
+.ev .t{font-weight:600;font-size:12.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ev .t.missing{color:var(--crit);font-style:italic;font-weight:500}
+.ev .meta{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:auto}
+.ev .rd{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:2px}
+.ev .rd i{display:block;height:100%;background:var(--accent)}
+.ev.short .t{-webkit-line-clamp:1}
+.ev.short .meta,.ev.short .rd{display:none}
+.ev.crit{border-color:var(--crit);box-shadow:inset 3px 0 0 var(--crit)}
+.ev.dim{opacity:.45}
+.ev.drag{opacity:.85;z-index:9;box-shadow:0 10px 24px rgba(20,43,73,.25);pointer-events:none}
+.ev.past{opacity:.55}
+.ev.now{outline:2px solid var(--teal);outline-offset:1px}
+.k-lectures{--accent:var(--c-lectures);--tint:var(--t-lectures)} .k-panel{--accent:var(--c-panel);--tint:var(--t-panel)} .k-workshop{--accent:var(--c-workshop);--tint:var(--t-workshop)}
+.k-symposium{--accent:var(--c-symposium);--tint:var(--t-symposium)} .k-break{--accent:var(--c-break);--tint:var(--t-break)} .k-ceremony{--accent:var(--c-ceremony);--tint:var(--t-ceremony)}
+.workshop-pat{background-image:radial-gradient(rgba(0,137,138,.18) 1px,transparent 1.2px);background-size:8px 8px}
+.band{position:absolute;z-index:3;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--t-break);color:var(--muted);font-size:12.5px;font-weight:500;cursor:pointer;border:1px dashed var(--c-break)}
+.nowline{position:absolute;left:58px;right:0;height:0;border-top:2px solid var(--teal);z-index:7;pointer-events:none}
+.nowline::before{content:attr(data-t);position:absolute;left:-56px;top:-10px;background:var(--teal);color:#fff;font-family:var(--f-mono);font-size:11px;padding:1px 5px;border-radius:4px}
+.ghostslot{position:absolute;left:4px;right:4px;border:1.5px dashed var(--royal);border-radius:7px;z-index:4;pointer-events:none;background:rgba(40,85,166,.06)}
+
+/* issues */
+.issues{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
+.iss{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:6px 8px;border-radius:7px;cursor:pointer;border:0;background:none;text-align:left;width:100%}
+.iss:hover{background:var(--grid)}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:6px}
+
+/* tables */
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tr.clk{cursor:pointer} tr.clk:hover td{background:var(--grid)}
+.empty{text-align:center;color:var(--muted);padding:34px 16px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:860px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-align:left;cursor:default}
+.kpi b{display:block;font-family:var(--f-display);font-size:30px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12.5px;color:var(--muted)}
+.kpi.crit b{color:var(--crit)} .kpi.warn b{color:var(--warn)}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:13px}
+.bar .tr{height:12px;background:var(--grid);border-radius:4px;display:flex;overflow:hidden}
+.bar .tr i{display:block;height:100%}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:860px){.g2{grid-template-columns:1fr}}
+
+/* drawer & modal */
+.scrim{position:fixed;inset:0;background:rgba(13,21,34,.45);z-index:40;display:flex;justify-content:flex-end}
+.drawer{width:min(860px,100%);height:100%;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 20px) 18px;gap:12px}
+.modal{margin:auto;width:min(640px,calc(100% - 32px));max-height:calc(100% - 40px);overflow:auto;background:var(--bg);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.dhead{position:sticky;top:calc(-1 * (env(safe-area-inset-top,0px) + 14px));z-index:3;background:var(--bg);padding-block:6px;margin-top:-6px}
+.lect{display:grid;grid-template-columns:28px minmax(0,2.2fr) minmax(0,1.6fr) 74px 92px auto;gap:8px;align-items:start;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+@media (max-width:720px){.lect{grid-template-columns:28px minmax(0,1fr) minmax(0,1fr)}.lect>.wide{grid-column:2/-1}}
+.ord{display:flex;flex-direction:column;align-items:center;gap:2px}
+.ord b{font-family:var(--f-mono);font-size:13px}
+.ord button{border:0;background:none;cursor:pointer;color:var(--muted);padding:0 4px;font-size:12px;line-height:1}
+.timeline{display:flex;height:22px;border-radius:6px;overflow:hidden;border:1px solid var(--line);font-size:11px}
+.timeline span{display:flex;align-items:center;justify-content:center;color:#fff;white-space:nowrap;overflow:hidden;padding:0 4px}
+.flow{display:flex;gap:4px;flex-wrap:wrap}
+.flow button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:12.5px;cursor:pointer}
+.flow button[aria-pressed="true"]{background:var(--royal);color:#fff;border-color:var(--royal)}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:500}
+.switch input{appearance:none;width:40px;height:22px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;transition:background .15s;flex:none;margin:0}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s}
+.switch input:checked{background:var(--ok)} .switch input:checked::after{left:21px}
+
+/* person picker */
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--soft);border-radius:99px;padding:3px 4px 3px 10px;font-size:13px}
+.chip button{border:0;background:var(--surface);border-radius:50%;width:20px;height:20px;cursor:pointer;line-height:1;color:var(--muted)}
+.chip.warn{background:var(--crit-soft);color:var(--crit)}
+.pick{position:relative;flex:1;min-width:180px}
+.pick-list{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 30px rgba(20,43,73,.18);z-index:50;max-height:260px;overflow:auto}
+.pick-list button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 12px;cursor:pointer;font-size:13.5px}
+.pick-list button:hover,.pick-list button.on{background:var(--grid)}
+.suggest{font-size:12.5px;color:var(--warn);margin-top:4px}
+.suggest button{border:0;background:none;color:var(--royal);cursor:pointer;text-decoration:underline;font-size:12.5px;padding:0 4px}
+
+/* public */
+.hero{background:#142B49;color:#fff;border-radius:14px;padding:30px 30px 26px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:320px;height:320px;border-radius:50%;border:44px solid rgba(201,164,92,.18)}
+.hero .eyebrow{color:#C9A45C}
+.hero h1{font-family:var(--f-display);font-size:clamp(26px,4.2vw,42px);font-weight:600;line-height:1.1;margin:8px 0 10px;max-width:760px}
+.hero .meta{display:flex;gap:6px 22px;flex-wrap:wrap;opacity:.9;font-size:15px}
+.views{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.views button{border:0;background:none;padding:10px 12px;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:3px solid transparent}
+.views button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+.plist{display:flex;flex-direction:column;gap:8px}
+.pitem{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;text-align:left;width:100%;box-shadow:inset 4px 0 0 var(--accent)}
+.pitem:hover{border-color:var(--accent)}
+.pitem .tm{font-family:var(--f-mono);font-size:13px}
+.pitem h3{font-family:var(--f-display);font-size:18px;font-weight:600;margin:2px 0 4px;line-height:1.25}
+.pitem.past{opacity:.55} .pitem.now{outline:2px solid var(--teal)}
+.livepill{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:600}
+.livepill::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.livepill::before{animation:none}}
+.dayhd{font-family:var(--f-display);font-size:22px;font-weight:600;margin:14px 0 4px}
+.dirgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px}
+.dirgrid button{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:left;cursor:pointer}
+.dirgrid button:hover{border-color:var(--royal)}
+.dirgrid b{font-family:var(--f-display);font-size:16.5px;font-weight:600}
+.spk{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-top:1px solid var(--line)}
+.sponsored{display:inline-block;background:var(--gold);color:#142B49;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:4px;padding:1px 6px}
+.code{font-family:var(--f-mono);font-size:11px;font-weight:500;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:0 5px;letter-spacing:.02em}
+.code.lg{font-size:13px;padding:2px 8px}
+.swapgrid{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:stretch}
+@media (max-width:620px){.swapgrid{grid-template-columns:1fr}.swapgrid .arrow{transform:rotate(90deg);justify-self:center}}
+.swapgrid .slot{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface)}
+.swapgrid .arrow{align-self:center;font-size:22px;color:var(--royal)}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:90;font-size:13.5px;max-width:calc(100% - 32px)}
+@media (max-width:640px){.mast{position:static}.brand span{display:none}.hero{padding:22px 18px}.card{padding:16px}.pitem{grid-template-columns:1fr;gap:4px}}
+</style>
+
+<header class="mast">
+  <div class="mast-in">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.5" fill="none" stroke="#C9A45C" stroke-width="2"/><path d="M13 7h6v6h6v6h-6v6h-6v-6H7v-6h6z" fill="#fff"/></svg>
+      <div><b id="brandName">Programme scientifique</b><span id="brandSub">Fédération Algérienne de Pharmacie</span></div>
+    </div>
+    <span class="demo" id="demoBadge" hidden>DÉMONSTRATION · données fictives</span>
+    <nav class="modes" aria-label="Espace">
+      <button id="m-public" data-act="mode" data-v="public">Programme public</button>
+      <button id="m-admin" data-act="mode" data-v="admin">Administration</button>
+    </nav>
+  </div>
+</header>
+<main id="app"></main>
+<div id="layer"></div>
+
+<script src="config.js"></script>
+<script src="lib/programme.js"></script>
+<script>
+"use strict";
+const P = window.PROG;
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+function toast(m,ms){ $$(".toast").forEach(x=>x.remove()); const t=document.createElement("div"); t.className="toast"; t.setAttribute("role","status"); t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),ms||(m.length>90?7000:3200)); }
+const ss={ get(k){ try{ return JSON.parse(sessionStorage.getItem(k)); }catch(e){ return null; } }, set(k,v){ try{ sessionStorage.setItem(k,JSON.stringify(v)); }catch(e){} } };
+const fmtDay=(d,o)=>{ const x=new Date(d+"T12:00:00"); return isNaN(x)?d:x.toLocaleDateString("fr-FR",o||{weekday:"long",day:"numeric",month:"long"}); };
+const fmtAt=iso=>{ const d=new Date(iso); return isNaN(d)?"":d.toLocaleString("fr-FR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}); };
+const codeTag=(s,lg)=>{ const c=P.codeOf(s||{}); return c?`<span class="code${lg?" lg":""}">${esc(c)}</span>`:""; };
+const slotLabel=s=>`${esc(fmtDay(s.day,{weekday:"short",day:"numeric",month:"short"}))} · ${esc(s.start)}–${esc(s.end)} · ${esc(s.allRooms?"Toutes salles":roomName(s.roomId))}`;
+const stPill=s=>`<span class="pill st-${esc(s)}">${esc((P.STATUS[s]||{}).label||s)}</span>`;
+
+/* ======================= Données : démo locale ou API Vercel ======================= */
+const API_URL=String(window.FAP_PROG_API??"").trim();
+const LIVE=!!API_URL;
+let api;
+if(LIVE){
+  const call=async(fn,args,token)=>{ let r; try{ r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fn,args,token})}); }catch(e){ throw new Error("Connexion au serveur impossible. Vérifiez votre connexion."); }
+    let j; try{ j=await r.json(); }catch(e){ throw new Error("Réponse du serveur illisible (erreur "+r.status+")."); } if(!j.ok) throw new Error(j.error||"Erreur serveur."); return j.data; };
+  api=new Proxy({},{get:(o,fn)=>(...a)=>call(fn,a,S.token)});
+}else{
+  const K="fapprog_demo_v2:"; const mem={};
+  const ls={ get(k){ try{ const v=localStorage.getItem(K+k); return v?JSON.parse(v):(mem[k]??null); }catch(e){ return mem[k]??null; } }, set(k,v){ mem[k]=v; try{ localStorage.setItem(K+k,JSON.stringify(v)); }catch(e){} } };
+  const coll=n=>ls.get(n)||{};
+  const store={
+    getCongress:async()=>ls.get("congress"), setCongress:async c=>ls.set("congress",c),
+    sessions:async()=>Object.values(coll("sessions")).map(clone), getSession:async id=>{ const x=coll("sessions")[id]; return x?clone(x):null; },
+    putSession:async s=>{ const c=coll("sessions"); c[s.id]=clone(s); ls.set("sessions",c); }, delSession:async id=>{ const c=coll("sessions"); delete c[id]; ls.set("sessions",c); },
+    persons:async()=>Object.values(coll("persons")).map(clone), getPerson:async id=>{ const x=coll("persons")[id]; return x?clone(x):null; },
+    putPerson:async p=>{ const c=coll("persons"); c[p.id]=clone(p); ls.set("persons",c); }, delPerson:async id=>{ const c=coll("persons"); delete c[id]; ls.set("persons",c); },
+    audit:async n=>(ls.get("audit")||[]).slice(0,n), addAudit:async e=>{ const a=ls.get("audit")||[]; a.unshift(e); ls.set("audit",a.slice(0,1000)); },
+    nextId:async k=>{ const q=ls.get("seq")||{S:1,P:1}; const id=k+String(q[k]++).padStart(3,"0"); ls.set("seq",q); return id; },
+    setSeq:async(s,p)=>ls.set("seq",{S:s,P:p})
+  };
+  const svc=P.createService(store);
+  const actor=()=>S.actor||"Administrateur";
+  api={
+    getPublic:()=>svc.getPublic(),
+    login:async(pw,name)=>{ if(pw!=="fap2026") throw new Error("Mot de passe incorrect."); return {token:"demo",name:name||"Administrateur"}; },
+    getState:()=>svc.getState(),
+    saveCongress:c=>svc.saveCongress(actor(),c), saveSession:(s,v)=>svc.saveSession(actor(),s,v), importSessions:l=>svc.importSessions(actor(),l),
+    deleteSession:id=>svc.deleteSession(actor(),id), setStatus:(id,st)=>svc.setStatus(actor(),id,st), setVisible:(id,v)=>svc.setVisible(actor(),id,v),
+    publishMany:ids=>svc.publishMany(actor(),ids), savePerson:p=>svc.savePerson(actor(),p), deletePerson:id=>svc.deletePerson(actor(),id),
+    mergePersons:(a,b)=>svc.mergePersons(actor(),a,b), swapSessions:(a,b,v,f)=>svc.swapSessions(actor(),a,b,v,f), renumber:()=>svc.renumber(actor()), seedDemo:()=>svc.seedDemo(actor()), clearProgramme:()=>svc.clearProgramme(actor())
+  };
+  api._boot=async()=>{ if(!(await store.sessions()).length && !ls.get("seeded")){ await svc.seedDemo("Démonstration"); ls.set("seeded",true); } };
+}
+
+/* ======================= État ======================= */
+const S={ mode:"public", pub:null, token:null, actor:"", data:null, tab:"builder", day:null, pubView:"grille", pubDay:null, q:"", pubRoom:"", pubTheme:"",
+  filt:{status:"",type:"",room:"",theme:"",q:""}, issuesOpen:false, sel:new Set() };
+const saved=ss.get("fapprog_auth"); if(saved){ S.token=saved.token; S.actor=saved.name; }
+const pmap=()=>{ const m={}; (S.data?.persons||[]).forEach(p=>m[p.id]=p); return m; };
+const C=()=>S.data?.congress||S.pub?.congress||P.defaultCongress();
+const roomName=id=>(C().rooms.find(r=>r.id===id)||{}).name||"—";
+let ISSUES=[], BYS={};
+function recompute(){ ISSUES=S.data?P.analyze(S.data):[]; BYS={}; ISSUES.forEach(i=>(BYS[i.sessionId]=BYS[i.sessionId]||[]).push(i)); }
+const crit=id=>(BYS[id]||[]).filter(i=>i.level==="critique");
+
+/* ======================= Rendu racine ======================= */
+function render(){
+  $("#m-public").setAttribute("aria-current",String(S.mode==="public"));
+  $("#m-admin").setAttribute("aria-current",String(S.mode==="admin"));
+  $("#demoBadge").hidden=LIVE;
+  const c=C(); $("#brandName").textContent=c.short?("Programme · "+c.short):"Programme scientifique";
+  $("#app").innerHTML = S.mode==="public" ? viewPublic() : (S.token&&S.data ? viewAdmin() : viewLogin());
+  after();
+}
+function after(){ if(S.mode==="admin"&&S.tab==="builder"&&S.data) bindGrid(); placeNow(); }
+
+/* ======================= Programme public ======================= */
+const PVIEWS=[["grille","Par jour"],["salle","Par salle"],["chrono","Chronologique"],["intervenants","Intervenants"],["themes","Par thème"]];
+function pubSessions(){ return (S.pub?.sessions||[]).slice().sort((a,b)=>a.day.localeCompare(b.day)||P.toMin(a.start)-P.toMin(b.start)||(a.roomId||"").localeCompare(b.roomId||"")); }
+function personsOfSnap(s){ const out=[]; const add=(p,role)=>p&&p.id&&out.push({p,role});
+  (s.moderators||[]).forEach(p=>add(p,"Modérateur")); (s.lectures||[]).forEach(l=>add(l.speaker,"Orateur")); (s.panelists||[]).forEach(p=>add(p,"Panéliste"));
+  (s.facilitators||[]).forEach(p=>add(p,"Animateur")); (s.instructors||[]).forEach(p=>add(p,"Formateur")); (s.speakers||[]).forEach(p=>add(p,"Intervenant")); if(s.sponsor) add(s.sponsor.speaker,"Orateur (symposium)"); return out; }
+function matchQ(s,q){ if(!q) return true; q=q.toLowerCase(); const hay=[s.title,s.subtitle,s.theme,s.description,roomName(s.roomId),s.sponsor&&s.sponsor.company,(s.lectures||[]).map(l=>l.title).join(" "),personsOfSnap(s).map(x=>x.p.name+" "+x.p.institution+" "+(x.p.specialties||"")+" "+x.role).join(" ")].join(" ").toLowerCase(); return hay.includes(q); }
+function liveState(s){ const n=P.nowIn(C().timezone); if(s.day!==n.day) return s.day<n.day?"past":""; if(P.toMin(s.end)<=n.min) return "past"; if(P.toMin(s.start)<=n.min) return "now"; return ""; }
+function isCongressNow(){ const n=P.nowIn(C().timezone); return C().days.some(d=>d.date===n.day); }
+function viewPublic(){
+  if(!S.pub) return `<div class="wrap"><div class="card empty">Chargement du programme…</div></div>`;
+  const c=S.pub.congress, d0=c.days[0], dN=c.days[c.days.length-1];
+  if(!S.pubDay||!c.days.some(d=>d.date===S.pubDay)) S.pubDay=(c.days.find(d=>d.date===P.nowIn(c.timezone).day)||d0).date;
+  const range=d0?(fmtDay(d0.date,{day:"numeric"})+(dN!==d0?"–"+fmtDay(dN.date,{day:"numeric",month:"long",year:"numeric"}):fmtDay(d0.date,{month:"long",year:"numeric"}))):"";
+  return `<div class="wrap stack">
+    <section class="hero"><span class="eyebrow">Programme scientifique officiel</span><h1>${esc(c.name)}</h1>
+      <div class="meta"><span>${esc(range)}</span><span>${esc(c.venue)}, ${esc(c.city)}</span><span>${c.rooms.length} salles en parallèle</span>${isCongressNow()?`<span class="livepill">En direct</span>`:""}</div></section>
+    <div class="row"><nav class="views" aria-label="Vues du programme" style="flex:1">${PVIEWS.map(([k,l])=>`<button data-act="pview" data-v="${k}" aria-current="${S.pubView===k}">${l}</button>`).join("")}</nav>
+      <input class="in" id="pq" type="search" placeholder="Rechercher un intervenant, un titre, une salle…" value="${esc(S.q)}" style="max-width:340px"></div>
+    ${legend()}
+    ${!S.pub.sessions.length?`<div class="card empty">Le programme scientifique sera publié prochainement.</div>`:({grille:pubGrid,salle:pubRoom,chrono:pubChrono,intervenants:pubDir,themes:pubThemes})[S.pubView]()}
+    <p class="tiny muted">Heures de ${esc(c.city)} (${esc(c.timezone)}). Programme susceptible d'évoluer. Dernière mise à jour : ${esc(fmtAt(S.pub.generatedAt))}.</p></div>`;
+}
+const legend=()=>`<div class="legend">${["lectures","panel","workshop","symposium","ceremony","break"].map(k=>`<span><i style="background:var(--c-${k})"></i>${esc(P.TYPES[k].label)}</span>`).join("")}</div>`;
+function dayTabs(days,cur,act){ return `<div class="daytabs">${days.map(d=>`<button data-act="${act}" data-v="${d.date}" aria-pressed="${d.date===cur}"><b>${esc(d.label||"")}</b><span>${esc(fmtDay(d.date))}</span></button>`).join("")}</div>`; }
+function pubGrid(){
+  const c=S.pub.congress, list=pubSessions().filter(s=>s.day===S.pubDay&&matchQ(s,S.q));
+  if(window.innerWidth<720) return dayTabs(c.days,S.pubDay,"pday")+plist(list,true);
+  return dayTabs(c.days,S.pubDay,"pday")+timeGrid({day:S.pubDay,rooms:c.rooms,sessions:list,blocks:c.blocks,mode:"public"});
+}
+function pubRoom(){ const c=S.pub.congress; if(!S.pubRoom) S.pubRoom=c.rooms[0].id;
+  return `<div class="daytabs">${c.rooms.map(r=>`<button data-act="proom" data-v="${r.id}" aria-pressed="${r.id===S.pubRoom}"><b>${esc(r.name)}</b><span>${pubSessions().filter(s=>s.roomId===r.id).length} activités</span></button>`).join("")}</div>`
+   + c.days.map(d=>{ const l=pubSessions().filter(s=>s.day===d.date&&(s.roomId===S.pubRoom||s.allRooms)&&matchQ(s,S.q)); return l.length?`<h2 class="dayhd">${esc(d.label)} · ${esc(fmtDay(d.date))}</h2>`+plist(l,false):""; }).join(""); }
+function pubChrono(){ return S.pub.congress.days.map(d=>{ const l=pubSessions().filter(s=>s.day===d.date&&matchQ(s,S.q)); return l.length?`<h2 class="dayhd">${esc(d.label)} · ${esc(fmtDay(d.date))}</h2>`+plist(l,true):""; }).join("")||`<div class="card empty">Aucune activité ne correspond à votre recherche.</div>`; }
+function pubThemes(){ const th=[...new Set(pubSessions().map(s=>s.theme).filter(Boolean))].sort();
+  return `<div class="row">${["",...th].map(t=>`<button class="btn ${S.pubTheme===t?"":"ghost"} sm" data-act="ptheme" data-v="${esc(t)}">${esc(t||"Tous les thèmes")}</button>`).join("")}</div>`
+   + plist(pubSessions().filter(s=>(!S.pubTheme||s.theme===S.pubTheme)&&s.type!=="break"&&matchQ(s,S.q)),true); }
+function pubDir(){ const m={}; pubSessions().forEach(s=>personsOfSnap(s).forEach(({p,role})=>{ (m[p.id]=m[p.id]||{p,items:[]}).items.push({s,role}); }));
+  const q=S.q.toLowerCase(); const L=Object.values(m).filter(x=>!q||(x.p.name+" "+x.p.institution+" "+(x.p.specialties||"")+" "+x.items.map(i=>i.role+" "+i.s.title).join(" ")).toLowerCase().includes(q))
+    .sort((a,b)=>a.p.name.replace(/^(Pr|Dr|M\.|Mme)\s/,"").localeCompare(b.p.name.replace(/^(Pr|Dr|M\.|Mme)\s/,""),"fr"));
+  return L.length?`<div class="dirgrid">${L.map(x=>`<button data-act="pperson" data-v="${esc(x.p.id)}"><b>${esc(x.p.name)}</b><div class="small muted">${esc(x.p.institution)}</div><div class="small" style="margin-top:6px">${x.items.length} intervention${x.items.length>1?"s":""} · ${esc([...new Set(x.items.map(i=>i.role))].join(", "))}</div></button>`).join("")}</div>`:`<div class="card empty">Aucun intervenant ne correspond à votre recherche.</div>`; }
+function plist(list,showRoom){ if(!list.length) return `<div class="card empty">Aucune activité ne correspond.</div>`;
+  return `<div class="plist">${list.map(s=>{ const L=liveState(s), ppl=personsOfSnap(s).filter(x=>x.role!=="Modérateur").slice(0,4).map(x=>x.p.name);
+    return `<button class="pitem k-${s.type} ${L}" data-act="psession" data-v="${esc(s.id)}"><div><div class="tm">${esc(s.start)}–${esc(s.end)}</div>${s.code?`<div class="code" style="display:inline-block;margin-top:4px">${esc(s.code)}</div>`:""}${showRoom?`<div class="small muted">${esc(s.allRooms?"Toutes salles":roomName(s.roomId))}</div>`:""}${L==="now"?`<span class="livepill" style="margin-top:6px">En cours</span>`:""}</div>
+      <div><span class="ty" style="color:var(--accent)">${esc(s.type==="ceremony"?(s.kind||"Cérémonie"):P.TYPES[s.type].label)}</span> ${s.type==="symposium"?`<span class="sponsored">Sponsorisé</span>`:""}<h3>${esc(s.title)}</h3>${s.subtitle?`<div class="muted">${esc(s.subtitle)}</div>`:""}
+      ${ppl.length?`<div class="small muted">${esc(ppl.join(" · "))}</div>`:""}${s.sponsor?`<div class="small"><b>${esc(s.sponsor.company)}</b></div>`:""}</div></button>`; }).join("")}</div>`; }
+function pubSessionModal(id){ const s=(S.pub.sessions||[]).find(x=>x.id===id); if(!s) return; modal(snapCard(s)+`<div class="row"><span class="spacer"></span><button class="btn ghost" data-act="close">Fermer</button></div>`); }
+function snapCard(s){
+  const ppl=(l)=>l.map(p=>`<div class="spk"><b>${esc(p.name)}</b><span class="small muted">${esc([p.institution,p.country].filter(Boolean).join(" · "))}</span></div>`).join("");
+  return `<div class="card k-${s.type}" style="box-shadow:inset 4px 0 0 var(--accent)">${s.code?`<span class="code lg">${esc(s.code)}</span> `:""}<span class="ty" style="color:var(--accent)">${esc(s.type==="ceremony"?(s.kind||"Cérémonie"):P.TYPES[s.type].label)}</span> ${s.type==="symposium"?`<span class="sponsored">Activité sponsorisée</span>`:""}
+    <h2 style="font-family:var(--f-display);font-size:24px;font-weight:600;margin:6px 0 2px">${esc(s.title)}</h2>${s.subtitle?`<div class="muted">${esc(s.subtitle)}</div>`:""}
+    <p class="mono small" style="margin:8px 0">${esc(fmtDay(s.day))} · ${esc(s.start)}–${esc(s.end)} · ${esc(s.allRooms?"Toutes salles":roomName(s.roomId))}${s.theme?` · <span style="font-family:var(--f-ui)">${esc(s.theme)}</span>`:""}</p>
+    ${s.description?`<p>${esc(s.description)}</p>`:""}
+    ${s.moderators&&s.moderators.length?`<h4 class="eyebrow" style="margin-top:12px">Modération</h4>${ppl(s.moderators)}`:""}
+    ${s.lectures&&s.lectures.length?`<h4 class="eyebrow" style="margin-top:12px">Conférences</h4>${s.lectures.map(l=>`<div class="spk"><span class="mono small">${esc(l.start)} · ${l.duration} min</span><b>${esc(l.title)}</b><span class="small muted">${esc(l.speaker?l.speaker.name+(l.speaker.institution?" — "+l.speaker.institution:""):"Orateur à confirmer")}</span></div>`).join("")}${s.discussion?`<div class="spk"><span class="small muted">Discussion générale · ${s.discussion} min</span></div>`:""}`:""}
+    ${s.panelists&&s.panelists.length?`<h4 class="eyebrow" style="margin-top:12px">Panélistes</h4>${ppl(s.panelists)}`:""}
+    ${s.facilitators&&s.facilitators.length?`<h4 class="eyebrow" style="margin-top:12px">Animation</h4>${ppl(s.facilitators.concat(s.instructors||[]))}`:""}
+    ${s.objectives?`<h4 class="eyebrow" style="margin-top:12px">Objectifs</h4><p style="margin:4px 0">${esc(s.objectives)}</p>`:""}
+    ${s.audience?`<p class="small"><b>Public :</b> ${esc(s.audience)}${s.capacity?` · ${esc(s.capacity)} places`:""}${s.registration?" · inscription requise":""}</p>`:""}
+    ${s.sponsor?`<h4 class="eyebrow" style="margin-top:12px">Sponsor</h4><div class="spk"><b>${esc(s.sponsor.company)}</b>${s.sponsor.presentationTitle?`<span>${esc(s.sponsor.presentationTitle)}</span>`:""}${s.sponsor.speaker?`<span class="small muted">${esc(s.sponsor.speaker.name)}</span>`:""}</div>`:""}
+    ${s.speakers&&s.speakers.length?`<h4 class="eyebrow" style="margin-top:12px">Intervenants</h4>${ppl(s.speakers)}`:""}</div>`;
+}
+function pubPersonModal(id){ const items=[]; let person=null; pubSessions().forEach(s=>personsOfSnap(s).forEach(({p,role})=>{ if(p.id===id){ person=p; items.push({s,role}); } })); if(!person) return;
+  modal(`<div class="card"><span class="eyebrow">Intervenant</span><h2 style="font-family:var(--f-display);font-size:24px;font-weight:600;margin:4px 0">${esc(person.name)}</h2><div class="muted">${esc([person.institution,person.country].filter(Boolean).join(" · "))}</div>${person.specialties?`<div class="small" style="margin-top:4px">${esc(person.specialties)}</div>`:""}${person.bio?`<p>${esc(person.bio)}</p>`:""}</div>
+    ${plist(items.map(i=>i.s),true)}<div class="row"><span class="spacer"></span><button class="btn ghost" data-act="close">Fermer</button></div>`); }
+
+/* ======================= Grille horaire (commune) ======================= */
+function timeGrid(o){
+  const c=o.mode==="public"?S.pub.congress:C();
+  const t0=P.toMin(c.dayStart||"08:30"), t1=P.toMin(c.dayEnd||"20:30"), H=(t1-t0);
+  const y=m=>`calc(var(--ppm) * ${m-t0})`, h=m=>`calc(var(--ppm) * ${m})`;
+  const times=[]; for(let m=Math.ceil((t0+1)/30)*30;m<t1;m+=30) times.push(m);
+  const bands=o.sessions.filter(s=>s.allRooms).map(s=>`<div class="band" data-act="${o.mode==="public"?"psession":"edit"}" data-v="${esc(s.id)}" style="top:${y(P.toMin(s.start))};height:calc(${h(P.toMin(s.end)-P.toMin(s.start))} - 2px);left:4px;width:calc(${o.rooms.length*100}% - 8px)">${esc(s.title||"Pause")} · <span class="mono">${esc(s.start)}–${esc(s.end)}</span>${o.mode==="admin"&&!s.visible?" · masqué":""}</div>`).join("");
+  const cols=o.rooms.map((r,ri)=>{
+    const closed=(o.blocks||[]).filter(b=>b.day===o.day&&b.rooms.includes(r.id)).map(b=>`<div class="blk-closed" style="top:${y(P.toMin(b.from))};height:${h(P.toMin(b.to)-P.toMin(b.from))}">Salle fermée<br>${esc(b.label)}</div>`).join("");
+    const ev=o.sessions.filter(s=>!s.allRooms&&s.roomId===r.id).map(s=>evBlock(s,o.mode,y,h)).join("");
+    return `<div class="tg-col" data-room="${r.id}" style="height:calc(var(--ppm) * ${H})">${closed}${ev}${ri===0?bands:""}</div>`;
+  }).join("");
+  return `<div class="gridwrap" id="gw"><div class="tg" style="--cols:${o.rooms.length}" data-day="${o.day}" data-t0="${t0}" data-t1="${t1}">
+    <div class="tg-corner"></div>${o.rooms.map(r=>`<div class="tg-head ${r.main?"main":""}">${esc(r.name)}<small>${r.main?"Salle principale":"Session parallèle"}</small></div>`).join("")}
+    <div class="tg-times" style="height:calc(var(--ppm) * ${H});position:sticky">${times.map(m=>`<span style="top:${y(m)}">${P.fromMin(m)}</span>`).join("")}</div>${cols}
+    <div class="nowline" id="nowline" hidden></div></div></div>`;
+}
+function evBlock(s,mode,y,h){
+  const D=P.dur(s), short=D<35, c=mode==="admin"?crit(s.id):[], al=mode==="admin"?(BYS[s.id]||[]).filter(i=>i.level==="alerte"):[], L=liveState(s);
+  const title=s.title?esc(s.title):`<span class="t missing">Titre manquant</span>`;
+  const dim=mode==="admin"&&(S.filt.status&&s.status!==S.filt.status||S.filt.type&&s.type!==S.filt.type);
+  const people=mode==="public"?personsOfSnap(s).filter(x=>x.role!=="Modérateur").slice(0,2).map(x=>x.p.name).join(" · "):"";
+  return `<div class="ev k-${s.type} ${s.type==="workshop"?"workshop-pat":""} ${short?"short":""} ${c.length?"crit":""} ${dim?"dim":""} ${L}" data-act="${mode==="public"?"psession":"edit"}" data-v="${esc(s.id)}" data-drag="${mode==="admin"?"1":""}"
+     style="top:${y(P.toMin(s.start))};height:calc(${h(D)} - 2px)" title="${esc((s.title||"Sans titre")+" · "+s.start+"–"+s.end)}">
+    <div class="row" style="gap:6px">${mode==="admin"?codeTag(s):(s.code?`<span class="code">${esc(s.code)}</span>`:"")}<span class="ty">${esc(s.type==="ceremony"?"Cérémonie":P.TYPES[s.type].short)}</span><span class="mono tiny muted">${esc(s.start)}–${esc(s.end)}</span>${mode==="admin"&&!s.visible?`<span class="tiny muted" title="Masqué au public">◌ masqué</span>`:""}</div>
+    ${s.title?`<div class="t">${title}</div>`:title}
+    ${mode==="public"&&people?`<div class="tiny muted">${esc(people)}</div>`:""}
+    ${mode==="admin"?`<div class="meta">${stPill(s.status)}${c.length?`<span class="pill" style="background:var(--crit-soft);color:var(--crit)">⚠ ${c.length}</span>`:al.length?`<span class="pill" style="background:var(--warn-soft);color:var(--warn)">${al.length}</span>`:""}</div><div class="rd"><i style="width:${P.readiness(s)}%"></i></div>`:""}
+  </div>`;
+}
+function placeNow(){
+  const nl=$("#nowline"), tg=$(".tg"); if(!nl||!tg) return;
+  const n=P.nowIn(C().timezone), t0=+tg.dataset.t0, t1=+tg.dataset.t1;
+  if(tg.dataset.day!==n.day||n.min<t0||n.min>t1){ nl.hidden=true; return; }
+  const ppm=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--ppm"))||1.35;
+  const col=$(".tg-col"); nl.hidden=false; nl.style.top=((col?col.offsetTop:44)+(n.min-t0)*ppm)+"px"; nl.dataset.t=P.fromMin(n.min);
+}
+setInterval(()=>{ if(isCongressNow()) { if(S.mode==="public"&&!$(".scrim")) render(); else placeNow(); } },60000);
+
+/* ======================= Administration ======================= */
+const TABS=[["dash","Tableau de bord"],["builder","Constructeur"],["sessions","Sessions"],["people","Intervenants"],["symposia","Symposiums"],["audit","Journal"],["config","Configuration"]];
+function viewLogin(){
+  return `<div class="wrap" style="max-width:440px"><div class="card stack"><span class="eyebrow">Espace d'administration</span><h1 class="h1">Programme scientifique</h1>
+    <p class="muted" style="margin:0">Accès réservé au comité d'organisation.</p>
+    ${LIVE?"":`<div class="notice warn">Mode démonstration : mot de passe <b class="mono">fap2026</b>. Les données restent dans ce navigateur.</div>`}
+    <div><label class="lbl" for="lg-name">Votre nom (pour le journal des modifications)</label><input class="in" id="lg-name" value="${esc(S.actor)}" autocomplete="name"></div>
+    <div><label class="lbl" for="lg-pw">Mot de passe</label><input class="in" id="lg-pw" type="password" autocomplete="current-password"></div>
+    <div id="lg-err"></div><div class="row"><button class="btn" data-act="login">Se connecter</button></div></div></div>`;
+}
+function viewAdmin(){
+  const nc=ISSUES.filter(i=>i.level==="critique").length;
+  return `<div class="wrap admin"><nav class="rail" aria-label="Administration">${TABS.map(([k,l])=>`<button data-act="tab" data-v="${k}" aria-current="${S.tab===k}">${l}${k==="builder"&&nc?`<span class="badge">${nc}</span>`:""}</button>`).join("")}
+    <div class="who">Connecté : <b>${esc(S.actor)}</b><br><button class="btn subtle sm" data-act="logout" style="padding-left:0">Déconnexion</button></div></nav>
+    <div class="stack" style="min-width:0">${({dash:aDash,builder:aBuilder,sessions:aSessions,people:aPeople,symposia:aSymposia,audit:aAudit,config:aConfig})[S.tab]()}</div></div>`;
+}
+const sessionsAll=()=>(S.data.sessions||[]);
+const sessionsActive=()=>sessionsAll().filter(s=>!P.INACTIVE.includes(s.status));
+
+/* ---- Tableau de bord ---- */
+function aDash(){
+  const A=sessionsActive(), sci=A.filter(s=>["lectures","panel","workshop"].includes(s.type));
+  const missSpk=sci.filter(s=>s.type==="lectures"&&(s.lectures||[]).some(l=>!l.speakerId)).length+sci.filter(s=>s.type==="panel"&&!(s.panelists||[]).length).length;
+  const missMod=sci.filter(s=>["lectures","panel"].includes(s.type)&&!(s.moderators||[]).length).length;
+  const sym=A.filter(s=>s.type==="symposium"), symFree=sym.filter(s=>!s.sponsor||!s.sponsor.company).length;
+  const nc=ISSUES.filter(i=>i.level==="critique").length, pub=A.filter(s=>s.snapshot&&s.visible).length;
+  const ready=sci.length?Math.round(sci.reduce((t,s)=>t+P.readiness(s),0)/sci.length):0;
+  const byRoom=C().rooms.map(r=>({l:r.name,n:sci.filter(s=>s.roomId===r.id).length}));
+  const byStatus=Object.keys(P.STATUS).map(k=>({k,l:P.STATUS[k].label,n:sessionsAll().filter(s=>s.status===k).length}));
+  const mx=Math.max(1,...byRoom.map(x=>x.n)), ms=Math.max(1,...byStatus.map(x=>x.n));
+  const low=sci.slice().sort((a,b)=>P.readiness(a)-P.readiness(b)).slice(0,8);
+  return `<div><span class="eyebrow">${esc(C().short)}</span><h1 class="h1">Tableau de bord du programme</h1></div>
+   <div class="kpis">
+    <div class="kpi"><b>${sci.length}</b><span>Sessions scientifiques</span></div>
+    <div class="kpi"><b>${pub}</b><span>Éléments publiés et visibles</span></div>
+    <div class="kpi"><b>${A.filter(s=>!s.snapshot).length}</b><span>Non publiés (brouillon à validé)</span></div>
+    <div class="kpi ${nc?"crit":""}"><b>${nc}</b><span>Conflits critiques</span></div>
+    <div class="kpi ${missSpk?"warn":""}"><b>${missSpk}</b><span>Sessions sans orateur complet</span></div>
+    <div class="kpi ${missMod?"warn":""}"><b>${missMod}</b><span>Sessions sans modérateur</span></div>
+    <div class="kpi"><b>${symFree} / ${sym.length}</b><span>Symposiums non attribués</span></div>
+    <div class="kpi"><b>${ready} %</b><span>Préparation moyenne</span></div></div>
+   <div class="g2"><div class="card"><h3 style="font-size:16px;margin-bottom:12px">Sessions scientifiques par salle</h3><div class="bars">${byRoom.map(x=>`<div class="bar"><span>${esc(x.l)}</span><div class="tr"><i style="width:${x.n/mx*100}%;background:var(--royal)"></i></div><b>${x.n}</b></div>`).join("")}</div></div>
+    <div class="card"><h3 style="font-size:16px;margin-bottom:12px">Statuts de publication</h3><div class="bars">${byStatus.map(x=>`<div class="bar"><span>${esc(x.l)}</span><div class="tr"><i class="st-${x.k}" style="width:${x.n/ms*100}%;background:currentColor"></i></div><b>${x.n}</b></div>`).join("")}</div></div></div>
+   <div class="card"><h3 style="font-size:16px;margin-bottom:10px">Sessions les moins prêtes</h3><div class="tw" style="border:0"><table><thead><tr><th>Session</th><th>Jour · salle</th><th>Préparation</th><th>Statut</th></tr></thead><tbody>
+   ${low.map(s=>`<tr class="clk" data-act="edit" data-v="${esc(s.id)}"><td><b>${esc(s.title||"Titre manquant")}</b><div class="small muted">${esc(P.TYPES[s.type].label)}</div></td><td class="small">${esc(fmtDay(s.day,{day:"numeric",month:"short"}))} · ${esc(s.start)} · ${esc(roomName(s.roomId))}</td><td class="mono">${P.readiness(s)} %</td><td>${stPill(s.status)}</td></tr>`).join("")||`<tr><td colspan="4" class="empty">Aucune session.</td></tr>`}</tbody></table></div></div>`;
+}
+
+/* ---- Constructeur ---- */
+function aBuilder(){
+  const c=C(); if(!S.day||!c.days.some(d=>d.date===S.day)) S.day=c.days[0].date;
+  const list=sessionsActive().filter(s=>s.day===S.day);
+  const dayIss=ISSUES.filter(i=>list.some(s=>s.id===i.sessionId)), nc=dayIss.filter(i=>i.level==="critique").length, na=dayIss.length-nc;
+  const ready=list.filter(s=>s.status==="valide"&&s.visible&&!crit(s.id).length).length;
+  return `<div class="row"><div><span class="eyebrow">Constructeur de programme</span><h1 class="h1">${esc(c.short)}</h1></div><span class="spacer"></span>
+      <button class="btn ghost sm" data-act="exportcsv">Exporter (Excel)</button><button class="btn gold sm" data-act="publishday"${ready?"":" disabled"}>Publier les sessions validées (${ready})</button></div>
+   <div class="row">${dayTabs(c.days,S.day,"day")}<span class="spacer"></span>
+     <select class="sel" id="f-status" style="width:auto"><option value="">Tous les statuts</option>${Object.keys(P.STATUS).filter(k=>!P.INACTIVE.includes(k)).map(k=>`<option value="${k}"${S.filt.status===k?" selected":""}>${P.STATUS[k].label}</option>`).join("")}</select>
+     <select class="sel" id="f-type" style="width:auto"><option value="">Tous les formats</option>${Object.keys(P.TYPES).map(k=>`<option value="${k}"${S.filt.type===k?" selected":""}>${P.TYPES[k].label}</option>`).join("")}</select>
+     <button class="btn ${nc?"danger":"ghost"} sm" data-act="issues">${nc?`⚠ ${nc} conflit${nc>1?"s":""} critique${nc>1?"s":""}`:"Aucun conflit critique"}${na?` · ${na} alerte${na>1?"s":""}`:""}</button></div>
+   ${S.issuesOpen?issuesPanel(dayIss):""}
+   <div class="row">${legend()}<span class="spacer"></span><span class="small muted">Cliquez dans une case vide pour créer · glissez un bloc pour le déplacer</span></div>
+   ${list.length?"":`<div class="notice info row"><span>Aucune activité ce jour.</span><button class="btn sm" data-act="gentemplate">Générer la trame horaire du jour</button></div>`}
+   ${timeGrid({day:S.day,rooms:c.rooms,sessions:list,blocks:c.blocks,mode:"admin"})}`;
+}
+function issuesPanel(list){
+  const sm={}; sessionsAll().forEach(s=>sm[s.id]=s);
+  const L=list.slice().sort((a,b)=>(a.level==="critique"?0:1)-(b.level==="critique"?0:1));
+  return `<div class="card"><div class="row"><h3 style="font-size:15px">Conflits et alertes du jour</h3><span class="spacer"></span><button class="btn subtle sm" data-act="issues">Masquer</button></div>
+   <div class="issues" style="margin-top:8px">${L.map(i=>{ const s=sm[i.sessionId]||{}; return `<button class="iss" data-act="edit" data-v="${esc(i.sessionId)}"><span class="dot" style="background:${i.level==="critique"?"var(--crit)":"var(--warn)"}"></span><span>${codeTag(s)} <b>${esc(s.title||"Sans titre")}</b> <span class="mono tiny muted">${esc(s.start||"")} · ${esc(roomName(s.roomId))}</span><br><span class="${i.level==="critique"?"issue-c":"issue-a"}">${esc(i.message)}</span></span></button>`; }).join("")||`<p class="muted small">Rien à signaler.</p>`}</div></div>`;
+}
+/* Glisser-déposer et création par clic */
+function bindGrid(){
+  const tg=$(".tg"); if(!tg) return;
+  const t0=+tg.dataset.t0, t1=+tg.dataset.t1, ppm=()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--ppm"))||1.35;
+  const minAt=(col,clientY)=>{ const r=col.getBoundingClientRect(); return Math.round((t0+(clientY-r.top)/ppm())/5)*5; };
+  $$(".tg-col").forEach(col=>col.addEventListener("click",e=>{
+    if(e.target.closest(".ev,.band")) return;
+    const m=Math.max(t0,Math.min(t1-20,Math.floor(minAt(col,e.clientY)/10)*10));
+    const bl=(C().blocks||[]).find(b=>b.day===S.day&&b.rooms.includes(col.dataset.room)&&m>=P.toMin(b.from)&&m<P.toMin(b.to));
+    if(bl){ toast(`${roomName(col.dataset.room)} est fermée de ${bl.from} à ${bl.to} : ${bl.label}.`); return; }
+    quickCreate(col.dataset.room,P.fromMin(m));
+  }));
+  $$(".ev[data-drag='1']").forEach(el=>el.addEventListener("pointerdown",e=>{
+    if(e.button!==0) return; const s=sessionsAll().find(x=>x.id===el.dataset.v); if(!s) return;
+    const sx=e.clientX, sy=e.clientY, D=P.dur(s), r0=el.getBoundingClientRect(), offY=sy-r0.top; let moved=false, ghost=null, target=null;
+    const move=ev=>{ if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<6) return; moved=true; ev.preventDefault();
+      el.classList.add("drag"); const col=document.elementsFromPoint(ev.clientX,ev.clientY).find(n=>n.classList&&n.classList.contains("tg-col"));
+      $$(".tg-col.drop").forEach(c=>c.classList.remove("drop")); if(!col){ target=null; ghost&&ghost.remove(); ghost=null; return; }
+      col.classList.add("drop"); const r=col.getBoundingClientRect(); let st=Math.round((t0+(ev.clientY-offY-r.top)/ppm())/5)*5; st=Math.max(t0,Math.min(t1-D,st));
+      target={roomId:col.dataset.room,start:P.fromMin(st),end:P.fromMin(st+D)};
+      if(!ghost){ ghost=document.createElement("div"); ghost.className="ghostslot"; } col.appendChild(ghost); ghost.style.top=((st-t0)*ppm())+"px"; ghost.style.height=(D*ppm()-2)+"px";
+      el.style.transform=`translate(${ev.clientX-sx}px,${ev.clientY-sy}px)`; };
+    const up=async()=>{ document.removeEventListener("pointermove",move); document.removeEventListener("pointerup",up);
+      el.classList.remove("drag"); el.style.transform=""; ghost&&ghost.remove(); $$(".tg-col.drop").forEach(c=>c.classList.remove("drop"));
+      if(!moved) return; S.justDragged=Date.now();
+      if(!target||(target.roomId===s.roomId&&target.start===s.start)) return;
+      await moveSession(s,target); };
+    document.addEventListener("pointermove",move); document.addEventListener("pointerup",up);
+  }));
+}
+async function moveSession(s,t){
+  const cand=Object.assign(clone(s),t);
+  const others=sessionsActive().filter(x=>x.id!==s.id);
+  const clash=others.find(x=>!x.allRooms&&x.roomId===cand.roomId&&P.overlap(x,cand));
+  if(clash){ toast(`Déplacement refusé : ${roomName(cand.roomId)} est déjà occupée par « ${clash.title||"une activité"} » (${clash.start}–${clash.end}).`); return; }
+  const bl=(C().blocks||[]).find(b=>b.day===cand.day&&b.rooms.includes(cand.roomId)&&P.toMin(cand.start)<P.toMin(b.to)&&P.toMin(b.from)<P.toMin(cand.end));
+  if(bl){ toast(`Déplacement refusé : ${roomName(cand.roomId)} est fermée de ${bl.from} à ${bl.to} (${bl.label}).`); return; }
+  try{ const n=await api.saveSession(cand,s.version); replaceSession(n); recompute(); render();
+    const pc=crit(n.id).filter(i=>i.code==="personne2"); toast(pc.length?`Déplacé, mais attention : ${pc[0].message}`:`« ${n.title||"Session"} » déplacée : ${roomName(n.roomId)}, ${n.start}–${n.end}${n.status==="modifie"?" · republication nécessaire":""}.`, pc.length?8000:0); }
+  catch(e){ toast(e.message); await reload(); }
+}
+function quickCreate(roomId,start){
+  const opts=[["lectures","Session scientifique (3 conférences)",90],["panel","Panel scientifique",90],["workshop","Atelier",90],["symposium","Symposium sponsorisé",20],["ceremony","Cérémonie / événement",30],["break","Pause (toutes salles)",30]];
+  modal(`<div class="card stack"><span class="eyebrow">Nouvelle activité</span><h3 style="font-size:19px">${esc(roomName(roomId))} · ${esc(fmtDay(S.day,{weekday:"long",day:"numeric",month:"long"}))} · ${esc(start)}</h3>
+    <div class="stack" style="gap:6px">${opts.map(([k,l,d])=>`<button class="btn ghost k-${k}" style="justify-content:flex-start;box-shadow:inset 4px 0 0 var(--accent)" data-act="create" data-type="${k}" data-room="${roomId}" data-start="${start}" data-d="${d}">${esc(l)} <span class="muted small" style="margin-left:auto">${d} min</span></button>`).join("")}</div>
+    <div class="row"><span class="spacer"></span><button class="btn ghost" data-act="close">Annuler</button></div></div>`);
+}
+
+/* ---- Liste des sessions ---- */
+function aSessions(){
+  const f=S.filt, q=(f.q||"").toLowerCase(), P_=pmap();
+  const L=sessionsAll().filter(s=>(!f.status||s.status===f.status)&&(!f.type||s.type===f.type)&&(!f.room||s.roomId===f.room)&&(!f.theme||s.theme===f.theme)&&
+    (!q||[P.codeOf(s),s.title,s.theme,P.peopleOf(s).map(x=>P.displayName(P_[x.id])).join(" "),(s.lectures||[]).map(l=>l.title).join(" ")].join(" ").toLowerCase().includes(q)))
+    .sort((a,b)=>a.day.localeCompare(b.day)||P.toMin(a.start)-P.toMin(b.start)||String(a.roomId).localeCompare(String(b.roomId)));
+  const sel=[...S.sel].filter(id=>L.some(s=>s.id===id));
+  return `<div class="row"><div><span class="eyebrow">Toutes les activités</span><h1 class="h1">Sessions</h1></div><span class="spacer"></span><button class="btn ghost sm" data-act="renumber">Renuméroter dans l'ordre chronologique</button><button class="btn ghost sm" data-act="exportcsv">Exporter (Excel)</button></div>
+   <div class="row"><input class="in" id="fs-q" type="search" placeholder="Titre, intervenant, conférence…" value="${esc(f.q)}" style="max-width:280px">
+    <select class="sel" id="fs-status" style="width:auto"><option value="">Statut</option>${Object.keys(P.STATUS).map(k=>`<option value="${k}"${f.status===k?" selected":""}>${P.STATUS[k].label}</option>`).join("")}</select>
+    <select class="sel" id="fs-type" style="width:auto"><option value="">Format</option>${Object.keys(P.TYPES).map(k=>`<option value="${k}"${f.type===k?" selected":""}>${P.TYPES[k].label}</option>`).join("")}</select>
+    <select class="sel" id="fs-room" style="width:auto"><option value="">Salle</option>${C().rooms.map(r=>`<option value="${r.id}"${f.room===r.id?" selected":""}>${esc(r.name)}</option>`).join("")}</select>
+    <select class="sel" id="fs-theme" style="width:auto;max-width:240px"><option value="">Thème</option>${C().themes.map(t=>`<option${f.theme===t?" selected":""}>${esc(t)}</option>`).join("")}</select></div>
+   ${sel.length?`<div class="notice info row"><b>${sel.length} sélectionnée${sel.length>1?"s":""}</b><span class="spacer"></span>
+     <select class="sel" id="bulk-st" style="width:auto"><option value="">Changer le statut…</option>${["en_preparation","a_valider","valide","publie","annule","archive"].map(k=>`<option value="${k}">${P.STATUS[k].label}</option>`).join("")}</select>
+     <button class="btn sm" data-act="bulk">Appliquer</button>${sel.length===2?`<button class="btn gold sm" data-act="swap" data-a="${esc(sel[0])}" data-b="${esc(sel[1])}">⇄ Échanger le contenu</button>`:""}<button class="btn ghost sm" data-act="selclear">Désélectionner</button></div>`:`<p class="small muted" style="margin:0">Astuce : cochez deux sessions pour échanger leur contenu.</p>`}
+   <div class="tw"><table><thead><tr><th><input type="checkbox" id="selall" aria-label="Tout sélectionner"${L.length&&L.every(s=>S.sel.has(s.id))?" checked":""}></th><th>N°</th><th>Horaire</th><th>Salle</th><th>Activité</th><th>Préparation</th><th>Conflits</th><th>Public</th><th>Statut</th></tr></thead><tbody>
+   ${L.map(s=>{ const c=crit(s.id).length, a=(BYS[s.id]||[]).length-c; return `<tr class="clk" data-act="edit" data-v="${esc(s.id)}"><td data-stop="1"><input type="checkbox" data-sel="${esc(s.id)}"${S.sel.has(s.id)?" checked":""} aria-label="Sélectionner"></td>
+     <td>${codeTag(s,true)}</td><td class="mono small" style="white-space:nowrap">${esc(fmtDay(s.day,{day:"2-digit",month:"2-digit"}))}<br>${esc(s.start)}–${esc(s.end)}</td><td class="small">${esc(s.allRooms?"Toutes salles":roomName(s.roomId))}</td>
+     <td class="k-${s.type}"><span class="ty" style="color:var(--accent)">${esc(P.TYPES[s.type].label)}</span><div><b>${esc(s.title||"Titre manquant")}</b></div>${s.theme?`<div class="small muted">${esc(s.theme)}</div>`:""}</td>
+     <td class="mono">${P.readiness(s)} %</td><td>${c?`<span class="issue-c">⚠ ${c}</span>`:""}${a?` <span class="issue-a">${a}</span>`:""}</td><td>${s.visible?(s.snapshot?"En ligne":"Visible"):"Masqué"}</td><td>${stPill(s.status)}</td></tr>`; }).join("")||`<tr><td colspan="9" class="empty">Aucune session ne correspond.</td></tr>`}
+   </tbody></table></div>`;
+}
+
+/* ---- Intervenants ---- */
+function aPeople(){
+  const q=(S.pq||"").toLowerCase(), roles={}; sessionsActive().forEach(s=>P.peopleOf(s).forEach(x=>{ (roles[x.id]=roles[x.id]||[]).push(x.role); }));
+  const busy={}; ISSUES.filter(i=>i.code==="personne2").forEach(i=>{ (S.data.persons||[]).forEach(p=>{ if(i.message.startsWith(P.displayName(p)+" ")) busy[p.id]=true; }); });
+  const dups=P.duplicates(S.data.persons||[]), pm=pmap();
+  const L=(S.data.persons||[]).filter(p=>!q||[P.displayName(p),p.institution,p.email,p.specialties].join(" ").toLowerCase().includes(q)).sort((a,b)=>a.lastName.localeCompare(b.lastName,"fr"));
+  return `<div class="row"><div><span class="eyebrow">Annuaire unique</span><h1 class="h1">Intervenants</h1></div><span class="spacer"></span><button class="btn sm" data-act="person" data-v="">+ Nouvelle personne</button></div>
+   ${dups.length?`<div class="card stack" style="gap:8px"><b>Doublons probables (${dups.length})</b>${dups.map(d=>`<div class="row small"><span>${esc(P.displayName(pm[d.a]))} <span class="muted">(${esc(pm[d.a].institution||"—")})</span> ↔ ${esc(P.displayName(pm[d.b]))} <span class="muted">(${esc(pm[d.b].institution||"—")})</span> · <i>${esc(d.reason)}</i></span><span class="spacer"></span><button class="btn ghost sm" data-act="merge" data-a="${esc(d.a)}" data-b="${esc(d.b)}">Fusionner…</button></div>`).join("")}</div>`:""}
+   <input class="in" id="pp-q" type="search" placeholder="Nom, établissement, e-mail, spécialité…" value="${esc(S.pq||"")}" style="max-width:360px">
+   <div class="tw"><table><thead><tr><th>Nom</th><th>Établissement</th><th>Rôles au congrès</th><th>Contact (interne)</th><th>Public</th></tr></thead><tbody>
+   ${L.map(p=>{ const r=roles[p.id]||[]; const cnt={}; r.forEach(x=>cnt[x]=(cnt[x]||0)+1);
+     return `<tr class="clk" data-act="person" data-v="${esc(p.id)}"><td><b>${esc(P.displayName(p))}</b>${busy[p.id]?` <span class="issue-c small">⚠ conflit horaire</span>`:""}<div class="small muted">${esc(p.func||"")}</div></td><td class="small">${esc(p.institution||"—")}<div class="muted">${esc([p.city,p.country].filter(Boolean).join(", "))}</div></td>
+     <td class="small">${Object.entries(cnt).map(([k,v])=>`${esc(k)}${v>1?" ×"+v:""}`).join(", ")||`<span class="muted">Aucune affectation</span>`}</td><td class="small">${esc(p.email||"—")}<div class="muted">${esc(p.phone||"")}</div></td><td>${p.visible?"Oui":"Non"}</td></tr>`; }).join("")||`<tr><td colspan="5" class="empty">Aucune fiche. Ajoutez une personne ou chargez la démonstration.</td></tr>`}
+   </tbody></table></div>`;
+}
+
+/* ---- Symposiums ---- */
+function aSymposia(){
+  const L=sessionsActive().filter(s=>s.type==="symposium").sort((a,b)=>a.day.localeCompare(b.day)||P.toMin(a.start)-P.toMin(b.start)||String(a.roomId).localeCompare(String(b.roomId)));
+  const cnt=k=>L.filter(s=>(s.sponsor||{}).commercial===k).length;
+  return `<div><span class="eyebrow">Créneaux sponsorisés</span><h1 class="h1">Symposiums</h1></div>
+   <div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div class="kpi"><b>${L.length}</b><span>Créneaux</span></div><div class="kpi"><b>${cnt("disponible")}</b><span>Disponibles</span></div><div class="kpi warn"><b>${cnt("reserve")}</b><span>Réservés</span></div><div class="kpi"><b>${cnt("attribue")}</b><span>Attribués</span></div></div>
+   <div class="tw"><table><thead><tr><th>Horaire</th><th>Salle</th><th>Titre</th><th>Sponsor</th><th>Orateur</th><th>Commercial</th><th>Statut</th></tr></thead><tbody>
+   ${L.map(s=>{ const sp=s.sponsor||{}; return `<tr class="clk" data-act="edit" data-v="${esc(s.id)}"><td class="mono small">${esc(fmtDay(s.day,{day:"2-digit",month:"2-digit"}))} · ${esc(s.start)}</td><td class="small">${esc(roomName(s.roomId))}</td><td>${esc(s.title||"—")}</td><td>${esc(sp.company||"En attente d'attribution")}</td><td class="small">${esc(P.displayName(pmap()[sp.speakerId])||"—")}</td>
+     <td><span class="pill ${sp.commercial==="attribue"?"st-publie":sp.commercial==="reserve"?"st-a_valider":"st-brouillon"}">${esc(P.SPONSOR_STATUS[sp.commercial]||"Disponible")}</span></td><td>${stPill(s.status)}</td></tr>`; }).join("")||`<tr><td colspan="7" class="empty">Aucun créneau de symposium.</td></tr>`}</tbody></table></div>`;
+}
+
+/* ---- Journal ---- */
+function aAudit(){
+  const A=S.data.audit||[];
+  return `<div><span class="eyebrow">Traçabilité</span><h1 class="h1">Journal des modifications</h1></div>
+   <div class="tw"><table><thead><tr><th>Date</th><th>Par</th><th>Action</th><th>Élément</th><th>Détail (avant → après)</th></tr></thead><tbody>
+   ${A.map(a=>`<tr${a.target&&a.target.startsWith("S")?` class="clk" data-act="edit" data-v="${esc(a.target)}"`:""}><td class="mono small" style="white-space:nowrap">${esc(fmtAt(a.at))}</td><td class="small">${esc(a.by)}</td><td><b>${esc(a.action)}</b></td><td class="small">${esc(a.label)}<div class="muted mono tiny">${esc(a.target)}</div></td>
+     <td class="small">${(a.changes||[]).slice(0,4).map(c=>`<div><b>${esc(c.field)}</b> : <span class="muted">${esc(String(c.before).slice(0,60))}</span> → ${esc(String(c.after).slice(0,60))}</div>`).join("")}${(a.changes||[]).length>4?`<div class="muted">+${a.changes.length-4} autres champs</div>`:""}</td></tr>`).join("")||`<tr><td colspan="5" class="empty">Aucune modification enregistrée.</td></tr>`}
+   </tbody></table></div>`;
+}
+
+/* ---- Configuration ---- */
+function aConfig(){
+  const c=C();
+  return `<div><span class="eyebrow">Multi-éditions</span><h1 class="h1">Configuration du congrès</h1></div>
+   <div class="card stack"><h3 style="font-size:16px">Édition</h3><div class="fgrid">
+     <div><label class="lbl" for="cf-name">Intitulé</label><input class="in" id="cf-name" value="${esc(c.name)}"></div><div><label class="lbl" for="cf-short">Intitulé court</label><input class="in" id="cf-short" value="${esc(c.short)}"></div>
+     <div><label class="lbl" for="cf-venue">Lieu</label><input class="in" id="cf-venue" value="${esc(c.venue)}"></div><div><label class="lbl" for="cf-city">Ville</label><input class="in" id="cf-city" value="${esc(c.city)}"></div>
+     <div><label class="lbl" for="cf-ds">Début de grille</label><input class="in" type="time" id="cf-ds" value="${esc(c.dayStart)}"></div><div><label class="lbl" for="cf-de">Fin de grille</label><input class="in" type="time" id="cf-de" value="${esc(c.dayEnd)}"></div></div>
+     <div class="fgrid">${c.days.map((d,i)=>`<div><label class="lbl" for="cf-d${i}">${esc(d.label||"Jour "+(i+1))}</label><input class="in" type="date" id="cf-d${i}" value="${esc(d.date)}"></div>`).join("")}</div>
+     <p class="small muted" style="margin:0">Changer une date déplace automatiquement les sessions et les fermetures de salle de ce jour.</p></div>
+   <div class="card stack"><h3 style="font-size:16px">Salles (pistes parallèles)</h3><div class="fgrid">${c.rooms.map((r,i)=>`<div><label class="lbl" for="cf-r${i}">Piste ${i+1}${r.main?" · principale":""}</label><input class="in" id="cf-r${i}" value="${esc(r.name)}"></div>`).join("")}</div></div>
+   <div class="card stack"><h3 style="font-size:16px">Fermetures de salles (séquences plénières)</h3>
+     ${(c.blocks||[]).map((b,i)=>`<div class="fgrid" style="align-items:end"><div><label class="lbl" for="cb-day${i}">Jour</label><select class="sel" id="cb-day${i}">${c.days.map(d=>`<option value="${d.date}"${d.date===b.day?" selected":""}>${esc(d.label)} · ${esc(d.date)}</option>`).join("")}</select></div>
+       <div><label class="lbl" for="cb-from${i}">De</label><input class="in" type="time" id="cb-from${i}" value="${esc(b.from)}"></div><div><label class="lbl" for="cb-to${i}">À</label><input class="in" type="time" id="cb-to${i}" value="${esc(b.to)}"></div>
+       <div style="grid-column:1/-1"><label class="lbl">Salles fermées</label><div class="row">${c.rooms.map(r=>`<label class="chk"><input type="checkbox" data-blk="${i}" value="${r.id}"${b.rooms.includes(r.id)?" checked":""}> ${esc(r.name)}</label>`).join("")}</div></div>
+       <div style="grid-column:1/-1"><label class="lbl" for="cb-lbl${i}">Libellé</label><input class="in" id="cb-lbl${i}" value="${esc(b.label)}"></div></div>`).join("<hr style='border:0;border-top:1px solid var(--line)'>")}
+     <p class="small muted" style="margin:0">Aucune session ne peut être publiée ni déposée dans une salle fermée.</p></div>
+   <div class="card stack"><h3 style="font-size:16px">Trame horaire type</h3><div class="tw" style="border:0"><table><thead><tr><th>Début</th><th>Fin</th><th>Type</th><th>Libellé</th></tr></thead><tbody>
+     ${c.template.map((t,i)=>`<tr><td><input class="in" type="time" id="ct-s${i}" value="${t.start}"></td><td><input class="in" type="time" id="ct-e${i}" value="${t.end}"></td><td><select class="sel" id="ct-k${i}">${[["session","Session scientifique"],["symposium","Symposium"],["break","Pause"]].map(([k,l])=>`<option value="${k}"${t.kind===k?" selected":""}>${l}</option>`).join("")}</select></td><td><input class="in" id="ct-l${i}" value="${esc(t.label)}"></td></tr>`).join("")}
+     </tbody></table></div><p class="small muted" style="margin:0">La trame sert à générer les créneaux vides d'un jour depuis le constructeur.</p></div>
+   <div class="card stack"><h3 style="font-size:16px">Thèmes scientifiques</h3><textarea class="ta" id="cf-themes" rows="6">${esc(c.themes.join("\n"))}</textarea></div>
+   <div class="row"><button class="btn" data-act="savecfg">Enregistrer la configuration</button></div>
+   <div class="card stack"><h3 style="font-size:16px">Données</h3><div class="row">
+     <button class="btn ghost sm" data-act="seed">Charger les données de démonstration</button><button class="btn ghost sm" data-act="clear" style="color:var(--crit)">Vider le programme…</button></div>
+     <p class="small muted" style="margin:0">La démonstration n'est disponible que si le programme est vide.</p></div>`;
+}
+
+/* ======================= Éditeur de session ======================= */
+let ED=null;
+function openEditor(id,draft){
+  const s=draft||clone(sessionsAll().find(x=>x.id===id)); if(!s) return;
+  ED={s,orig:JSON.stringify(s),tab:"edit"}; drawEditor();
+}
+function drawEditor(){
+  const s=ED.s, c=C(), isNew=!s.id, iss=s.id?(BYS[s.id]||[]):[], cr=iss.filter(i=>i.level==="critique");
+  const hist=(S.data.audit||[]).filter(a=>a.target===s.id).slice(0,12);
+  const persons=(f,max,label,req)=>`<div><label class="lbl">${label}${req?' <span class="req">*</span>':""}${max?` <span class="tiny">(${max} max.)</span>`:""}</label>${picker(f,s[f]||[],max)}</div>`;
+  let body="";
+  if(s.type==="lectures"){ const used=(s.lectures||[]).reduce((t,l)=>t+(+l.duration||0),0)+(+s.discussion||0), D=P.dur(s);
+    body=persons("moderators",3,"Modérateurs",true)+`<div class="stack" style="gap:8px"><div class="row"><b>Conférences</b><span class="spacer"></span><span class="small ${used>D?"issue-c":used<D?"issue-a":"muted"} mono">${used} / ${D} min</span></div>
+      <div class="timeline">${(s.lectures||[]).map((l,i)=>`<span style="flex:${+l.duration||1};background:var(--c-lectures);opacity:${.65+i*.12}">${i+1} · ${l.duration}′</span>`).join("")}<span style="flex:${+s.discussion||1};background:var(--c-break)">Discussion ${s.discussion}′</span>${used<D?`<span style="flex:${D-used};background:transparent;color:var(--muted)">libre</span>`:""}</div>
+      ${(s.lectures||[]).map((l,i)=>`<div class="lect"><div class="ord"><button data-act="lup" data-i="${i}" aria-label="Monter">▲</button><b>${i+1}</b><button data-act="ldown" data-i="${i}" aria-label="Descendre">▼</button></div>
+        <div class="wide"><label class="lbl" for="l-title${i}">Titre de la conférence</label><input class="in" id="l-title${i}" data-l="${i}" data-k="title" value="${esc(l.title)}"></div>
+        <div class="wide"><label class="lbl">Orateur</label>${picker("lec:"+i,l.speakerId?[l.speakerId]:[],1)}</div>
+        <div><label class="lbl" for="l-d${i}">Durée</label><input class="in mono" type="number" min="5" max="120" id="l-d${i}" data-l="${i}" data-k="duration" value="${l.duration}"></div>
+        <div><label class="lbl" for="l-r${i}">Réf. résumé</label><input class="in mono" id="l-r${i}" data-l="${i}" data-k="abstractRef" value="${esc(l.abstractRef)}" placeholder="FAP10-…"></div>
+        <div class="stack" style="gap:4px"><label class="chk tiny" title="Visible au public"><input type="checkbox" data-l="${i}" data-k="visible"${l.visible!==false?" checked":""}> Public</label><button class="btn subtle sm" data-act="ldel" data-i="${i}" style="color:var(--crit);padding:0">Retirer</button></div></div>`).join("")}
+      <div class="row"><button class="btn ghost sm" data-act="ladd">+ Ajouter une conférence</button><span class="spacer"></span><label class="lbl" for="e-disc" style="margin:0">Discussion générale (min)</label><input class="in mono" type="number" id="e-disc" min="0" max="120" value="${s.discussion}" style="width:84px"></div></div>`; }
+  if(s.type==="panel") body=persons("moderators",3,"Modérateurs",true)+persons("panelists",0,"Panélistes",true);
+  if(s.type==="workshop") body=persons("facilitators",0,"Animateurs",true)+persons("instructors",0,"Formateurs")+`<div><label class="lbl" for="e-obj">Objectifs scientifiques</label><textarea class="ta" id="e-obj" rows="3">${esc(s.objectives)}</textarea></div>
+    <div class="fgrid"><div><label class="lbl" for="e-aud">Public cible</label><input class="in" id="e-aud" value="${esc(s.audience)}"></div><div><label class="lbl" for="e-cap">Capacité maximale</label><input class="in" type="number" id="e-cap" value="${esc(s.capacity)}"></div>
+    <div style="align-self:end"><label class="chk"><input type="checkbox" id="e-reg"${s.registration?" checked":""}> Inscription requise</label></div></div>
+    <div><label class="lbl" for="e-log">Notes logistiques (internes)</label><textarea class="ta" id="e-log" rows="2">${esc(s.logistics)}</textarea></div>`;
+  if(s.type==="symposium"){ const sp=s.sponsor||{}; body=`<div class="fgrid"><div><label class="lbl" for="e-co">Laboratoire / entreprise</label><input class="in" id="e-co" value="${esc(sp.company)}" placeholder="En attente d'attribution"></div>
+    <div><label class="lbl" for="e-com">Statut commercial (interne)</label><select class="sel" id="e-com">${Object.entries(P.SPONSOR_STATUS).map(([k,v])=>`<option value="${k}"${sp.commercial===k?" selected":""}>${v}</option>`).join("")}</select></div></div>
+    <div><label class="lbl" for="e-pt">Titre de la présentation</label><input class="in" id="e-pt" value="${esc(sp.presentationTitle)}"></div>
+    <div><label class="lbl">Orateur du symposium</label>${picker("sponsor",sp.speakerId?[sp.speakerId]:[],1)}</div>
+    <div class="fgrid"><div><label class="lbl" for="e-logo">Logo du sponsor (adresse https)</label><input class="in" id="e-logo" value="${esc(sp.logo)}" placeholder="https://…"></div>
+    <div style="align-self:end"><label class="chk"><input type="checkbox" id="e-spv"${sp.detailsVisible!==false?" checked":""}> Afficher le sponsor au public</label></div></div>`; }
+  if(s.type==="ceremony") body=`<div><label class="lbl" for="e-kind">Type d'événement</label><select class="sel" id="e-kind">${P.CEREMONY_KINDS.map(k=>`<option${s.kind===k?" selected":""}>${esc(k)}</option>`).join("")}</select></div>`+persons("speakers",0,"Intervenants");
+  if(s.type==="break") body=`<label class="chk"><input type="checkbox" id="e-all"${s.allRooms?" checked":""}> Pause commune à toutes les salles</label>`;
+  const flow=["brouillon","en_preparation","a_valider","valide"];
+  layer(`<div class="scrim" data-act="scrim"><aside class="drawer" role="dialog" aria-modal="true" aria-label="Éditeur de session">
+   <div class="dhead row">${codeTag(s,true)}<span class="pill k-${s.type}" style="background:var(--tint);color:var(--accent)">${esc(P.TYPES[s.type].label)}</span>${s.id?`<span class="mono tiny muted">v${s.version}</span>`:""}${s.id?stPill(s.status):`<span class="pill st-brouillon">Nouvelle</span>`}<span class="spacer"></span>
+     <button class="btn ghost sm" data-act="preview">Aperçu public</button>${s.id&&s.type!=="break"&&!P.INACTIVE.includes(s.status)?`<button class="btn ghost sm" data-act="swap" data-a="${esc(s.id)}">⇄ Échanger avec…</button>`:""}${s.id?`<button class="btn ghost sm" data-act="dup">Dupliquer</button>`:""}<button class="btn ghost sm" data-act="close">Fermer</button></div>
+   ${cr.length?`<div class="notice crit"><b>Publication bloquée.</b>${cr.map(i=>`<div>• ${esc(i.message)}</div>`).join("")}</div>`:""}
+   ${iss.filter(i=>i.level==="alerte").length?`<div class="notice warn">${iss.filter(i=>i.level==="alerte").map(i=>`<div>• ${esc(i.message)}</div>`).join("")}</div>`:""}
+   ${s.status==="modifie"?`<div class="notice info">Le public voit encore la version publiée le ${esc(fmtAt(s.publishedAt))}. Republiez pour diffuser vos modifications.</div>`:""}
+   <div class="card stack">
+     <div><label class="lbl" for="e-title">${s.type==="panel"?"Titre du panel":s.type==="workshop"?"Titre de l'atelier":s.type==="symposium"?"Titre du symposium":"Titre de la session"} <span class="req">*</span></label><input class="in" id="e-title" value="${esc(s.title)}" style="font-weight:600;font-size:16px"></div>
+     ${s.type==="break"?"":`<div class="fgrid"><div><label class="lbl" for="e-sub">Sous-titre</label><input class="in" id="e-sub" value="${esc(s.subtitle)}"></div><div><label class="lbl" for="e-theme">Thème scientifique</label><select class="sel" id="e-theme"><option value="">—</option>${c.themes.map(t=>`<option${s.theme===t?" selected":""}>${esc(t)}</option>`).join("")}</select></div></div>`}
+     <div class="fgrid"><div><label class="lbl" for="e-day">Jour</label><select class="sel" id="e-day">${c.days.map(d=>`<option value="${d.date}"${s.day===d.date?" selected":""}>${esc(d.label)} · ${esc(fmtDay(d.date,{day:"numeric",month:"short"}))}</option>`).join("")}</select></div>
+       ${s.allRooms?"":`<div><label class="lbl" for="e-room">Salle</label><select class="sel" id="e-room">${c.rooms.map(r=>`<option value="${r.id}"${s.roomId===r.id?" selected":""}>${esc(r.name)}</option>`).join("")}</select></div>`}
+       ${P.familyOf(s)?`<div><label class="lbl" for="e-num">N° (${P.familyOf(s)})</label><input class="in mono" type="number" min="1" max="999" id="e-num" value="${+s.num||""}" placeholder="auto"></div>`:""}
+       <div><label class="lbl" for="e-start">Début</label><input class="in mono" type="time" step="300" id="e-start" value="${esc(s.start)}"></div><div><label class="lbl" for="e-end">Fin</label><input class="in mono" type="time" step="300" id="e-end" value="${esc(s.end)}"></div></div>
+     ${["break"].includes(s.type)?"":`<div><label class="lbl" for="e-desc">${s.type==="panel"?"Description du panel":s.type==="workshop"?"Description de l'atelier":"Description"}</label><textarea class="ta" id="e-desc" rows="2">${esc(s.description)}</textarea></div>`}
+   </div>
+   <div class="card stack">${body||`<p class="muted small" style="margin:0">Aucun intervenant pour ce format.</p>`}</div>
+   <div class="card stack"><div><label class="lbl" for="e-notes">Notes administratives privées</label><textarea class="ta" id="e-notes" rows="2" placeholder="Jamais affichées au public">${esc(s.notes)}</textarea></div></div>
+   <div class="card stack"><div class="row"><b>Publication</b><span class="spacer"></span><span class="small muted">Préparation : <b class="mono">${P.readiness(s)} %</b></span></div>
+     <label class="switch"><input type="checkbox" id="e-vis"${s.visible?" checked":""}> Visible au public</label>
+     <div class="small muted">Un élément n'apparaît sur le programme public qu'une fois <b>publié</b> et <b>visible</b>. Le masquer le retire immédiatement.</div>
+     ${s.id?`<div class="flow" aria-label="Circuit de validation">${flow.map(k=>`<button data-act="status" data-v="${k}" aria-pressed="${s.status===k}">${P.STATUS[k].label}</button>`).join("<span class='muted'>→</span>")}</div>
+     <div class="row"><button class="btn gold" data-act="status" data-v="publie"${cr.length||!s.visible?" disabled":""}>${s.snapshot?"Republier":"Publier"}</button>${s.snapshot?`<span class="small ok" style="color:var(--ok)">En ligne depuis le ${esc(fmtAt(s.publishedAt))}${s.publishedBy?" par "+esc(s.publishedBy):""}</span>`:""}
+       <span class="spacer"></span><button class="btn ghost sm" data-act="status" data-v="annule">Annuler la session</button><button class="btn ghost sm" data-act="delete" style="color:var(--crit)">${s.snapshot||P.LIVE.includes(s.status)?"Archiver":"Supprimer"}</button></div>`:`<p class="small muted" style="margin:0">Enregistrez d'abord la session pour la faire valider puis publier.</p>`}</div>
+   ${hist.length?`<div class="card"><b>Historique</b>${hist.map(a=>`<div class="small" style="padding:6px 0;border-top:1px solid var(--line);margin-top:6px"><span class="mono tiny muted">${esc(fmtAt(a.at))}</span> · <b>${esc(a.action)}</b> par ${esc(a.by)}${(a.changes||[]).length?` <span class="muted">(${a.changes.map(c=>esc(c.field)).slice(0,5).join(", ")})</span>`:""}</div>`).join("")}</div>`:""}
+   <div class="row" style="position:sticky;bottom:calc(-1 * (env(safe-area-inset-bottom,0px) + 20px));background:var(--bg);padding-block:12px"><button class="btn" data-act="save">${isNew?"Créer la session":"Enregistrer"}</button><span class="small muted" id="e-dirty"></span></div>
+  </aside></div>`);
+  bindEditor();
+}
+function readEditor(){
+  const s=ED.s, v=id=>{ const e=$("#"+id); return e?e.value:undefined; };
+  ["title:e-title","subtitle:e-sub","theme:e-theme","day:e-day","roomId:e-room","start:e-start","end:e-end","description:e-desc","notes:e-notes","objectives:e-obj","audience:e-aud","capacity:e-cap","logistics:e-log","kind:e-kind"].forEach(x=>{ const [k,id]=x.split(":"); const val=v(id); if(val!==undefined) s[k]=val; });
+  if($("#e-vis")) s.visible=$("#e-vis").checked; if($("#e-reg")) s.registration=$("#e-reg").checked; if($("#e-all")) s.allRooms=$("#e-all").checked;
+  if($("#e-disc")) s.discussion=+$("#e-disc").value||0;
+  if($("#e-num")) s.num=parseInt($("#e-num").value,10)||0;
+  $$("[data-l]").forEach(el=>{ const l=s.lectures[+el.dataset.l]; if(!l) return; const k=el.dataset.k; l[k]=el.type==="checkbox"?el.checked:k==="duration"?(+el.value||0):el.value; });
+  if(s.type==="symposium"){ s.sponsor=Object.assign(s.sponsor||{},{company:v("e-co")||"",commercial:v("e-com")||"disponible",presentationTitle:v("e-pt")||"",logo:v("e-logo")||"",detailsVisible:$("#e-spv").checked}); }
+  return s;
+}
+function bindEditor(){
+  const mark=()=>{ readEditor(); const d=$("#e-dirty"); if(d) d.textContent=JSON.stringify(ED.s)!==ED.orig?"Modifications non enregistrées":""; };
+  const all=$("#e-all"); if(all) all.addEventListener("change",()=>{ readEditor(); if(!ED.s.allRooms&&!ED.s.roomId) ED.s.roomId=C().rooms[0].id; if(ED.s.allRooms) ED.s.roomId=null; redrawEditorKeepScroll(); });
+  $$(".drawer input,.drawer select,.drawer textarea").forEach(el=>{ if(!el.closest(".pick")) el.addEventListener("input",mark); el.addEventListener("change",mark); });
+  bindPickers();
+}
+async function saveEditor(quiet){
+  const s=readEditor();
+  if(!String(s.title||"").trim()){ toast("Le titre est obligatoire."); $("#e-title")?.focus(); return null; }
+  if(!(P.toMin(s.end)>P.toMin(s.start))){ toast("L'heure de fin doit suivre l'heure de début."); return null; }
+  try{ const n=await api.saveSession(s,s.id?s.version:null); replaceSession(n); recompute(); await refreshAudit(); ED={s:clone(n),orig:JSON.stringify(n)}; if(!quiet) toast(n.status==="modifie"?"Enregistré. Le public voit encore l'ancienne version : republiez pour diffuser.":"Session enregistrée."); return n; }
+  catch(e){ toast(e.message); return null; }
+}
+
+/* ---- Sélecteur de personnes ---- */
+function picker(field,ids,max){
+  const pm=pmap(), busy=ED&&ED.s.id?new Set(ISSUES.filter(i=>i.sessionId===ED.s.id&&i.code==="personne2").map(i=>i.message.split(" (")[0])):new Set();
+  return `<div class="chips" data-picker="${esc(field)}" data-max="${max||0}">${ids.map(id=>{ const p=pm[id]; const n=P.displayName(p)||"Fiche supprimée"; return `<span class="chip ${busy.has(n)?"warn":""}" title="${esc(p?p.institution||"":"")}">${esc(n)}${busy.has(n)?" ⚠":""}<button data-act="unpick" data-f="${esc(field)}" data-v="${esc(id)}" aria-label="Retirer">×</button></span>`; }).join("")}
+    ${!max||ids.length<max?`<div class="pick"><input class="in" placeholder="Rechercher ou créer une personne…" data-pick="${esc(field)}" autocomplete="off"><div class="pick-list" hidden></div></div>`:""}</div>`;
+}
+function getIds(f){ const s=ED.s; if(f.startsWith("lec:")){ const l=s.lectures[+f.slice(4)]; return l.speakerId?[l.speakerId]:[]; } if(f==="sponsor") return s.sponsor&&s.sponsor.speakerId?[s.sponsor.speakerId]:[]; return s[f]||[]; }
+function setIds(f,ids){ const s=ED.s; if(f.startsWith("lec:")) s.lectures[+f.slice(4)].speakerId=ids[0]||""; else if(f==="sponsor") s.sponsor.speakerId=ids[0]||""; else s[f]=ids; }
+function bindPickers(){
+  $$("[data-pick]").forEach(inp=>{
+    const box=inp.nextElementSibling, f=inp.dataset.pick;
+    const show=()=>{ const q=inp.value.trim().toLowerCase(), cur=getIds(f);
+      const L=(S.data.persons||[]).filter(p=>!cur.includes(p.id)&&(!q||(P.displayName(p)+" "+p.institution+" "+p.email).toLowerCase().includes(q))).slice(0,8);
+      box.innerHTML=L.map(p=>`<button type="button" data-act="pickp" data-f="${esc(f)}" data-v="${esc(p.id)}"><b>${esc(P.displayName(p))}</b> <span class="muted small">${esc(p.institution||"")}</span></button>`).join("")+`<button type="button" data-act="newp" data-f="${esc(f)}" data-q="${esc(inp.value)}" style="color:var(--royal)">+ Créer « ${esc(inp.value||"nouvelle personne")} »</button>`;
+      box.hidden=false; };
+    inp.addEventListener("focus",show); inp.addEventListener("input",show);
+    inp.addEventListener("blur",()=>setTimeout(()=>box.hidden=true,180));
+  });
+}
+function redrawEditorKeepScroll(){ const d=$(".drawer"), y=d?d.scrollTop:0; readEditor(); drawEditor(); const n=$(".drawer"); if(n) n.scrollTop=y; }
+
+/* ---- Échange de contenu entre deux sessions ---- */
+function swapModal(idA,idB){
+  const A=sessionsAll().find(s=>s.id===idA); if(!A) return;
+  const cands=P.chronoSort(sessionsActive().filter(s=>s.id!==A.id&&s.type!=="break"),C());
+  modal(`<div class="card stack"><span class="eyebrow">Échange de contenu</span><h3 style="font-size:19px">Échanger ${codeTag(A,true)} avec une autre session</h3>
+    <p class="small muted" style="margin:0">Les créneaux (numéro, jour, heure, salle) restent en place. Le contenu est interverti : titre, format, intervenants, conférences, thème, notes.</p>
+    <div><label class="lbl" for="sw-b">Session à échanger</label><select class="sel" id="sw-b"><option value="">Choisir une session…</option>${cands.map(s=>`<option value="${esc(s.id)}"${s.id===idB?" selected":""}>${esc(P.codeOf(s)||"—")} · ${esc(fmtDay(s.day,{day:"2-digit",month:"2-digit"}))} ${esc(s.start)} · ${esc(roomName(s.roomId))} — ${esc((s.title||"Sans titre").slice(0,70))}</option>`).join("")}</select></div>
+    <div id="sw-prev"></div></div>`);
+  const show=()=>{ const b=$("#sw-b").value, out=$("#sw-prev"); if(!b){ out.innerHTML=""; return; }
+    let r; try{ r=P.swapCheck(S.data,A.id,b); }catch(e){ out.innerHTML=`<div class="notice crit">${esc(e.message)}</div>`; return; }
+    const B=sessionsAll().find(s=>s.id===b);
+    const slot=(orig,next)=>`<div class="slot"><div class="row" style="gap:6px">${codeTag(orig,true)}<span class="small muted">${slotLabel(orig)}</span></div>
+      <div class="small muted" style="margin-top:8px">Avant</div><div style="text-decoration:line-through;color:var(--muted)">${esc(orig.title||"Sans titre")}</div>
+      <div class="small muted" style="margin-top:6px">Après l'échange</div><div><b>${esc(next.title||"Sans titre")}</b> <span class="small muted">(${esc(P.TYPES[next.type].label)})</span></div>
+      <div style="margin-top:6px">${stPill(next.status)}${orig.snapshot?` <span class="small muted">Le public voit l'ancienne version jusqu'à la republication.</span>`:""}</div></div>`;
+    const durA=P.dur(A), durB=P.dur(B);
+    out.innerHTML=`<div class="swapgrid">${slot(A,r.a)}<div class="arrow" aria-hidden="true">⇄</div>${slot(B,r.b)}</div>
+      ${durA!==durB?`<div class="notice warn">Les deux créneaux n'ont pas la même durée (${durA} min et ${durB} min). Vérifiez la répartition des conférences après l'échange.</div>`:""}
+      <div class="notice ${r.newCrit.length?"crit":"ok"}"><b>Contrôle des chevauchements :</b> ${r.newCrit.length?`${r.newCrit.length} nouveau(x) conflit(s) critique(s)`:"aucun nouveau conflit"}${r.newCrit.map(i=>{ const s=sessionsAll().find(x=>x.id===i.sessionId)||{}; return `<div>• ${codeTag(s)} ${esc(i.message)}</div>`; }).join("")}</div>
+      ${r.newWarn.length?`<div class="notice warn">${r.newWarn.map(i=>`<div>• ${esc(i.message)}</div>`).join("")}</div>`:""}
+      ${r.solved.length?`<div class="notice ok">Conflits résolus par l'échange :${r.solved.map(i=>`<div>• ${esc(i.message)}</div>`).join("")}</div>`:""}
+      <div class="row">${r.newCrit.length?`<button class="btn danger" data-act="doswap" data-a="${esc(A.id)}" data-b="${esc(B.id)}" data-force="1">Échanger quand même</button><span class="small muted">La publication restera bloquée tant que les conflits ne sont pas résolus.</span>`
+        :`<button class="btn" data-act="doswap" data-a="${esc(A.id)}" data-b="${esc(B.id)}">⇄ Échanger ${esc(P.codeOf(A)||"")} et ${esc(P.codeOf(B)||"")}</button>`}<span class="spacer"></span><button class="btn ghost" data-act="close">Annuler</button></div>`; };
+  $("#sw-b").addEventListener("change",show); show();
+}
+
+/* ---- Fiche personne ---- */
+function personModal(id,forField,prefill){
+  const p=id?clone((S.data.persons||[]).find(x=>x.id===id)):{id:"",title:"Dr",firstName:"",lastName:"",func:"",institution:"",department:"",affiliation:"",city:"",country:"Algérie",email:"",phone:"",bio:"",bioPublic:false,specialties:"",visible:true};
+  if(prefill){ const parts=prefill.trim().split(/\s+/); if(/^(dr|pr)\.?$/i.test(parts[0])) p.title=parts.shift().replace(".","").replace(/^./,c=>c.toUpperCase()); p.firstName=parts.shift()||""; p.lastName=parts.join(" "); }
+  const roles=[]; if(id) sessionsActive().forEach(s=>P.peopleOf(s).filter(x=>x.id===id).forEach(x=>roles.push({s,role:x.role})));
+  const f=(k,l,t)=>`<div><label class="lbl" for="p-${k}">${l}</label><input class="in" id="p-${k}" ${t?`type="${t}"`:""} value="${esc(p[k])}"><div class="suggest" id="sg-${k}"></div></div>`;
+  modal(`<div class="card stack"><span class="eyebrow">${id?"Fiche intervenant":"Nouvelle personne"}</span>
+    <div class="fgrid"><div><label class="lbl" for="p-title">Titre</label><select class="sel" id="p-title">${P.TITLES.map(t=>`<option${p.title===t?" selected":""}>${t}</option>`).join("")}</select></div>${f("firstName","Prénom *")}${f("lastName","Nom *")}</div>
+    <div class="fgrid">${f("func","Fonction")}${f("institution","Établissement")}${f("department","Service / département")}</div>
+    <div class="fgrid">${f("city","Ville")}${f("country","Pays")}${f("specialties","Spécialités")}</div>
+    <div class="fgrid">${f("email","E-mail (interne)","email")}${f("phone","Téléphone (interne)","tel")}</div>
+    <div><label class="lbl" for="p-bio">Biographie</label><textarea class="ta" id="p-bio" rows="3">${esc(p.bio)}</textarea></div>
+    <div class="row"><label class="chk"><input type="checkbox" id="p-bioPublic"${p.bioPublic?" checked":""}> Biographie publique</label><label class="chk"><input type="checkbox" id="p-visible"${p.visible!==false?" checked":""}> Nom visible au public</label></div>
+    <div id="p-dup"></div><div id="p-err"></div>
+    ${roles.length?`<div class="small"><b>Affectations :</b>${roles.map(r=>`<div>${esc(r.role)} · ${esc(r.s.title||"Sans titre")} <span class="mono muted">${esc(fmtDay(r.s.day,{day:"2-digit",month:"2-digit"}))} ${esc(r.s.start)} · ${esc(roomName(r.s.roomId))}</span></div>`).join("")}</div>`:""}
+    <div class="row"><button class="btn" data-act="saveperson" data-v="${esc(id||"")}" data-f="${esc(forField||"")}">${id?"Enregistrer":"Créer la fiche"}</button>${id&&!roles.length?`<button class="btn ghost" data-act="delperson" data-v="${esc(id)}" style="color:var(--crit)">Supprimer</button>`:""}<span class="spacer"></span><button class="btn ghost" data-act="${forField?"closemodal":"close"}">Annuler</button></div></div>`, !!forField);
+  const sugg=()=>{
+    [["firstName",P.suggestName],["lastName",P.suggestName],["institution",P.suggestInstitution],["func",P.suggestInstitution]].forEach(([k,fn])=>{ const el=$("#p-"+k), v=el.value, s=fn(v); $("#sg-"+k).innerHTML=s&&s!==v?`Suggestion : « ${esc(s)} » <button type="button" data-act="applysg" data-k="${k}" data-v="${esc(s)}">Appliquer</button>`:""; });
+    const fn_=$("#p-firstName").value, ln=$("#p-lastName").value, em=$("#p-email").value.trim().toLowerCase();
+    const d=P.duplicates([{id:"__new",firstName:fn_,lastName:ln,email:em}].concat((S.data.persons||[]).filter(x=>x.id!==id))).filter(x=>x.a==="__new"||x.b==="__new");
+    $("#p-dup").innerHTML=d.length?`<div class="notice warn">Doublon possible : ${d.map(x=>{ const o=(S.data.persons||[]).find(p=>p.id===(x.a==="__new"?x.b:x.a)); return `<b>${esc(P.displayName(o))}</b> (${esc(x.reason.toLowerCase())})${forField?` <button class="btn subtle sm" data-act="pickp" data-f="${esc(forField)}" data-v="${esc(o.id)}" data-close="1">Utiliser cette fiche</button>`:""}`; }).join(", ")}</div>`:"";
+  };
+  $$(".modal input").forEach(i=>i.addEventListener("input",sugg)); sugg();
+}
+async function savePersonFromModal(id,forField){
+  const g=k=>$("#p-"+k);
+  const p={id,title:g("title").value,firstName:g("firstName").value,lastName:g("lastName").value,func:g("func").value,institution:g("institution").value,department:g("department").value,city:g("city").value,country:g("country").value,specialties:g("specialties").value,email:g("email").value,phone:g("phone").value,bio:g("bio").value,bioPublic:g("bioPublic").checked,visible:g("visible").checked};
+  const prev=(S.data.persons||[]).find(x=>x.id===id); if(prev) p.version=prev.version;
+  try{ const n=await api.savePerson(p); const L=S.data.persons; const i=L.findIndex(x=>x.id===n.id); if(i>=0) L[i]=n; else L.push(n); recompute(); await refreshAudit();
+    toast(id?"Fiche enregistrée.":"Fiche créée.");
+    if(forField&&ED){ closeModal(); const cur=getIds(forField); setIds(forField,cur.concat(n.id)); redrawEditorKeepScroll(); } else { closeAll(); render(); } }
+  catch(e){ $("#p-err").innerHTML=`<div class="notice crit">${esc(e.message)}</div>`; }
+}
+
+/* ======================= Couches (tiroir, modale) ======================= */
+function layer(html){ $("#layer").innerHTML=html; }
+function modal(html,stacked){
+  const el=document.createElement("div"); el.className="scrim"+(stacked?" stacked":""); el.dataset.act="scrim"; el.style.justifyContent="center"; el.style.zIndex=stacked?60:40;
+  el.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+  if(!stacked) $("#layer").innerHTML=""; $("#layer").appendChild(el); setTimeout(()=>{ const f=el.querySelector("input,button"); f&&f.focus(); },20);
+}
+function closeModal(){ const m=$$("#layer .scrim.stacked"); if(m.length) m[m.length-1].remove(); else closeAll(); }
+function closeAll(){ if(ED&&$(".drawer")){ readEditor(); if(JSON.stringify(ED.s)!==ED.orig&&!closeAll.confirm){ closeAll.confirm=true; toast("Modifications non enregistrées : cliquez à nouveau sur Fermer pour les abandonner."); setTimeout(()=>closeAll.confirm=false,4000); return; } }
+  closeAll.confirm=false; $("#layer").innerHTML=""; ED=null; }
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("#layer").innerHTML){ $("#layer .scrim.stacked")?closeModal():closeAll(); } });
+
+/* ======================= Données : chargement et mises à jour locales ======================= */
+function replaceSession(n){ const L=S.data.sessions, i=L.findIndex(x=>x.id===n.id); if(i>=0) L[i]=n; else L.push(n); }
+async function refreshAudit(){ try{ const st=await api.getState(); S.data.audit=st.audit; }catch(e){} }
+async function reload(){ try{ S.data=await api.getState(); recompute(); }catch(e){ if(/Session expirée|Connexion requise/.test(e.message)){ S.token=null; ss.set("fapprog_auth",null); } toast(e.message); } render(); }
+async function loadPublic(){ try{ S.pub=await api.getPublic(); }catch(e){ S.pub={congress:P.defaultCongress(),sessions:[],generatedAt:new Date().toISOString()}; toast(e.message); } }
+
+/* ======================= Export Excel (CSV) ======================= */
+function exportCSV(){
+  const pm=pmap(), cell=v=>'"'+String(v??"").replace(/"/g,'""')+'"', rows=[["N°","Jour","Début","Fin","Salle","Format","Titre","Thème","Statut","Visible","Modérateurs","Intervenants","Conférences","Sponsor","Préparation %"].map(cell).join(";")];
+  sessionsAll().slice().sort((a,b)=>a.day.localeCompare(b.day)||P.toMin(a.start)-P.toMin(b.start)).forEach(s=>rows.push([P.codeOf(s),s.day,s.start,s.end,s.allRooms?"Toutes salles":roomName(s.roomId),P.TYPES[s.type].label,s.title,s.theme,P.STATUS[s.status].label,s.visible?"Oui":"Non",
+    (s.moderators||[]).map(id=>P.displayName(pm[id])).join(", "),P.peopleOf(s).filter(x=>x.role!=="Modérateur").map(x=>P.displayName(pm[x.id])+" ("+x.role+")").join(", "),(s.lectures||[]).map((l,i)=>(i+1)+". "+l.title).join(" | "),s.sponsor?s.sponsor.company:"",P.readiness(s)].map(cell).join(";")));
+  const blob=new Blob(["﻿"+rows.join("\r\n")],{type:"text/csv;charset=utf-8"}), name="programme-"+(C().id||"congres")+"-"+new Date().toISOString().slice(0,10)+".csv";
+  (async()=>{
+    const dl=window.claude&&window.claude.use?await window.claude.use("downloads").catch(()=>null):null;
+    if(dl){ try{ await dl.save({filename:name,data:blob}); toast(sessionsAll().length+" activités exportées."); }catch(e){ if(e&&e.code!=="declined") toast("Export impossible dans cette vue."); } return; }
+    const u=URL.createObjectURL(blob), a=document.createElement("a"); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),2000);
+    toast(sessionsAll().length+" activités exportées.");
+  })();
+}
+
+/* ======================= Actions ======================= */
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-act]"); if(!t) return;
+  if(e.target.closest("[data-stop]")&&t.tagName==="TR") return;
+  const a=t.dataset.act, v=t.dataset.v;
+  if(a==="scrim"){ if(e.target===t) (t.classList.contains("stacked")?closeModal():closeAll()); return; }
+  if(a==="ev"||a==="psession"){ if(S.mode==="public") pubSessionModal(v); return; }
+  switch(a){
+    case "mode": S.mode=v; try{ history.replaceState(null,"","#"+(v==="admin"?"admin":"programme")); }catch(_){}
+      if(v==="public") await loadPublic(); else if(S.token&&!S.data) await reload(); render(); window.scrollTo(0,0); break;
+    case "pview": S.pubView=v; render(); break;
+    case "pday": S.pubDay=v; render(); break;
+    case "proom": S.pubRoom=v; render(); break;
+    case "ptheme": S.pubTheme=v; render(); break;
+    case "pperson": pubPersonModal(v); break;
+    case "close": closeAll(); break;
+    case "closemodal": closeModal(); break;
+    case "login": { const name=$("#lg-name").value.trim(), pw=$("#lg-pw").value; if(!name){ $("#lg-err").innerHTML=`<div class="notice crit">Indiquez votre nom : il apparaîtra dans le journal des modifications.</div>`; return; }
+      try{ const r=await api.login(pw,name); S.token=r.token; S.actor=r.name; ss.set("fapprog_auth",{token:r.token,name:r.name}); await reload(); }catch(err){ $("#lg-err").innerHTML=`<div class="notice crit">${esc(err.message)}</div>`; } break; }
+    case "logout": S.token=null; S.data=null; ss.set("fapprog_auth",null); render(); break;
+    case "tab": S.tab=v; render(); window.scrollTo(0,0); break;
+    case "day": S.day=v; render(); break;
+    case "issues": S.issuesOpen=!S.issuesOpen; render(); break;
+    case "edit": if(Date.now()-(S.justDragged||0)<400) return; closeAll(); openEditor(v); break;
+    case "create": { closeAll(); const st=t.dataset.start, d=+t.dataset.d; const s=P.blankSession(t.dataset.type,S.day,t.dataset.type==="break"?null:t.dataset.room,st,P.fromMin(P.toMin(st)+d));
+      if(t.dataset.type==="break") s.title="Pause-café"; openEditor(null,s); setTimeout(()=>$("#e-title")?.focus(),30); break; }
+    case "gentemplate": { const L=P.templateSessions(C(),S.day); try{ await api.importSessions(L); await reload(); toast(L.length+" créneaux créés pour ce jour."); }catch(err){ toast(err.message); } break; }
+    case "publishday": { const ids=sessionsActive().filter(s=>s.day===S.day&&s.status==="valide"&&s.visible&&!crit(s.id).length).map(s=>s.id);
+      try{ const r=await api.publishMany(ids); await reload(); const ko=r.filter(x=>!x.ok); toast(`${r.length-ko.length} session(s) publiée(s)${ko.length?` · ${ko.length} refusée(s) : ${ko[0].error}`:""}.`); }catch(err){ toast(err.message); } break; }
+    case "exportcsv": exportCSV(); break;
+    /* éditeur */
+    case "save": { const n=await saveEditor(); if(n){ render(); drawEditor(); } break; }
+    case "status": { let s=ED.s; if(!s.id) return; readEditor(); if(JSON.stringify(ED.s)!==ED.orig){ s=await saveEditor(true); if(!s) return; }
+      try{ const r=await api.setStatus(s.id,v); if(r.ok===false){ toast("Publication refusée : "+r.error,9000); return; } replaceSession(r.session); recompute(); await refreshAudit(); ED={s:clone(r.session),orig:JSON.stringify(r.session)}; render(); drawEditor();
+        toast(v==="publie"?"Publié : visible sur le programme public.":"Statut : "+P.STATUS[v].label+"."); }catch(err){ toast(err.message); } break; }
+    case "delete": { const s=ED.s; if(!t.dataset.armed){ t.dataset.armed="1"; t.textContent="Confirmer"; setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.textContent=s.snapshot||P.LIVE.includes(s.status)?"Archiver":"Supprimer"; } },4000); return; }
+      try{ const r=await api.deleteSession(s.id); if(r.deleted) S.data.sessions=S.data.sessions.filter(x=>x.id!==s.id); else replaceSession(r.session); recompute(); await refreshAudit(); ED=null; layer(""); render(); toast(r.deleted?"Session supprimée.":"Session archivée et retirée du public."); }catch(err){ toast(err.message); } break; }
+    case "dup": { readEditor(); const c=clone(ED.s); delete c.snapshot; Object.assign(c,{id:"",num:0,status:"brouillon",version:0,title:(c.title||"")+" (copie)"}); openEditor(null,c); toast("Copie prête : choisissez une salle ou un horaire, puis enregistrez."); break; }
+    case "preview": { readEditor(); const snap=P.publicSnapshot(ED.s,S.data.persons||[]); modal(`<div class="notice info">Aperçu exact de ce que verra le public après publication.</div>${snapCard(snap)}<div class="row"><span class="spacer"></span><button class="btn ghost" data-act="closemodal">Fermer l'aperçu</button></div>`,true); break; }
+    case "ladd": readEditor(); ED.s.lectures.push({id:"L"+Date.now().toString(36),title:"",speakerId:"",duration:20,abstractRef:"",visible:true}); redrawEditorKeepScroll(); break;
+    case "ldel": readEditor(); ED.s.lectures.splice(+t.dataset.i,1); redrawEditorKeepScroll(); break;
+    case "lup": case "ldown": { readEditor(); const i=+t.dataset.i, j=a==="lup"?i-1:i+1, L=ED.s.lectures; if(j<0||j>=L.length) return; [L[i],L[j]]=[L[j],L[i]]; redrawEditorKeepScroll(); break; }
+    case "pickp": { const f=t.dataset.f; readEditor(); const cur=getIds(f); if(!cur.includes(v)) setIds(f,cur.concat(v)); if(t.dataset.close) closeModal(); redrawEditorKeepScroll(); setTimeout(()=>{ const i=$(`[data-pick="${CSS.escape(f)}"]`); i&&i.focus(); },20); break; }
+    case "unpick": { readEditor(); setIds(t.dataset.f,getIds(t.dataset.f).filter(x=>x!==v)); redrawEditorKeepScroll(); break; }
+    case "newp": readEditor(); personModal(null,t.dataset.f,t.dataset.q); break;
+    /* personnes */
+    case "person": personModal(v||null); break;
+    case "saveperson": await savePersonFromModal(v||"",t.dataset.f||""); break;
+    case "applysg": { const el=$("#p-"+t.dataset.k); el.value=t.dataset.v; el.dispatchEvent(new Event("input")); break; }
+    case "delperson": try{ await api.deletePerson(v); S.data.persons=S.data.persons.filter(p=>p.id!==v); closeAll(); render(); toast("Fiche supprimée."); }catch(err){ toast(err.message); } break;
+    case "merge": { const pm=pmap(), A=pm[t.dataset.a], B=pm[t.dataset.b];
+      modal(`<div class="card stack"><span class="eyebrow">Fusion de fiches</span><p style="margin:0">Choisissez la fiche à conserver. Toutes les affectations de l'autre fiche lui seront transférées, puis l'autre fiche sera supprimée.</p>
+        ${[A,B].map(p=>`<label class="chk card" style="padding:12px"><input type="radio" name="keep" value="${esc(p.id)}"${p===A?" checked":""}><span><b>${esc(P.displayName(p))}</b><br><span class="small muted">${esc(p.institution||"—")} · ${esc(p.email||"sans e-mail")}</span></span></label>`).join("")}
+        <div class="row"><button class="btn" data-act="domerge" data-a="${esc(A.id)}" data-b="${esc(B.id)}">Fusionner</button><span class="spacer"></span><button class="btn ghost" data-act="close">Annuler</button></div></div>`); break; }
+    case "domerge": { const keep=$("input[name=keep]:checked").value, drop=keep===t.dataset.a?t.dataset.b:t.dataset.a; try{ await api.mergePersons(keep,drop); closeAll(); await reload(); toast("Fiches fusionnées."); }catch(err){ toast(err.message); } break; }
+    /* liste */
+    case "selclear": S.sel.clear(); render(); break;
+    case "swap": { if(ED&&$(".drawer")){ readEditor(); if(JSON.stringify(ED.s)!==ED.orig){ const n=await saveEditor(true); if(!n) return; } } const a=t.dataset.a, b=t.dataset.b||""; ED=null; layer(""); swapModal(a,b); break; }
+    case "doswap": { const A=sessionsAll().find(s=>s.id===t.dataset.a), B=sessionsAll().find(s=>s.id===t.dataset.b); t.disabled=true;
+      try{ const r=await api.swapSessions(A.id,B.id,[A.version,B.version],!!t.dataset.force);
+        if(r.ok===false){ toast("Échange non effectué : "+(r.conflicts||[]).map(c=>c.message)[0],9000); t.disabled=false; return; }
+        closeAll(); S.sel.clear(); await reload(); toast(`${P.codeOf(A)||"Session"} ⇄ ${P.codeOf(B)||"session"} : contenus échangés${r.conflicts&&r.conflicts.length?` · ${r.conflicts.length} conflit(s) à résoudre`:""}.`, r.conflicts&&r.conflicts.length?8000:0); }
+      catch(err){ toast(err.message); t.disabled=false; } break; }
+    case "renumber": { if(!t.dataset.armed){ t.dataset.armed="1"; t.textContent="Confirmer la renumérotation"; setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.textContent="Renuméroter dans l'ordre chronologique"; } },4000); return; }
+      try{ const n=await api.renumber(); await reload(); toast(n?`${n} session(s) renumérotée(s) : S01, S02… suivent désormais l'ordre jour → heure → salle.`:"La numérotation suit déjà l'ordre chronologique."); }catch(err){ toast(err.message); } break; }
+    case "bulk": { const st=$("#bulk-st").value; if(!st){ toast("Choisissez un statut."); return; } const ids=[...S.sel]; let ok=0, ko=[];
+      if(st==="publie"){ const r=await api.publishMany(ids); ok=r.filter(x=>x.ok).length; ko=r.filter(x=>!x.ok); }
+      else for(const id of ids){ try{ await api.setStatus(id,st); ok++; }catch(err){ ko.push({id,error:err.message}); } }
+      S.sel.clear(); await reload(); toast(`${ok} session(s) mises à jour${ko.length?` · ${ko.length} refusée(s) : ${ko[0].error}`:""}.`,ko.length?9000:0); break; }
+    /* configuration */
+    case "savecfg": await saveConfig(); break;
+    case "seed": try{ await api.seedDemo(); await reload(); toast("Données de démonstration chargées."); }catch(err){ toast(err.message); } break;
+    case "clear": { if(!t.dataset.armed){ t.dataset.armed="1"; t.textContent="Confirmer : tout supprimer"; setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.textContent="Vider le programme…"; } },5000); return; }
+      try{ await api.clearProgramme(); await reload(); toast("Programme vidé."); }catch(err){ toast(err.message); } break; }
+  }
+});
+document.addEventListener("input",e=>{
+  const id=e.target.id;
+  if(id==="pq"){ S.q=e.target.value; const p=e.target.selectionStart; render(); const n=$("#pq"); n.focus(); n.setSelectionRange(p,p); }
+  if(id==="fs-q"){ S.filt.q=e.target.value; const p=e.target.selectionStart; render(); const n=$("#fs-q"); n.focus(); n.setSelectionRange(p,p); }
+  if(id==="pp-q"){ S.pq=e.target.value; const p=e.target.selectionStart; render(); const n=$("#pp-q"); n.focus(); n.setSelectionRange(p,p); }
+});
+document.addEventListener("change",e=>{
+  const id=e.target.id;
+  const map={"f-status":"status","f-type":"type","fs-status":"status","fs-type":"type","fs-room":"room","fs-theme":"theme"};
+  if(map[id]){ S.filt[map[id]]=e.target.value; render(); }
+  if(e.target.dataset.sel){ e.target.checked?S.sel.add(e.target.dataset.sel):S.sel.delete(e.target.dataset.sel); render(); }
+  if(id==="selall"){ $$("[data-sel]").forEach(c=>e.target.checked?S.sel.add(c.dataset.sel):S.sel.delete(c.dataset.sel)); render(); }
+});
+async function saveConfig(){
+  const c=clone(C()), g=id=>$("#"+id);
+  c.name=g("cf-name").value; c.short=g("cf-short").value; c.venue=g("cf-venue").value; c.city=g("cf-city").value; c.dayStart=g("cf-ds").value; c.dayEnd=g("cf-de").value;
+  const moves={}; c.days.forEach((d,i)=>{ const nv=g("cf-d"+i).value; if(nv&&nv!==d.date){ moves[d.date]=nv; d.date=nv; } });
+  c.rooms.forEach((r,i)=>r.name=g("cf-r"+i).value||r.name);
+  c.blocks.forEach((b,i)=>{ b.day=g("cb-day"+i).value; b.from=g("cb-from"+i).value; b.to=g("cb-to"+i).value; b.label=g("cb-lbl"+i).value; b.rooms=$$(`[data-blk="${i}"]:checked`).map(x=>x.value); if(moves[b.day]) b.day=moves[b.day]; });
+  c.template.forEach((t,i)=>{ t.start=g("ct-s"+i).value; t.end=g("ct-e"+i).value; t.kind=g("ct-k"+i).value; t.label=g("ct-l"+i).value; });
+  c.themes=g("cf-themes").value.split("\n").map(x=>x.trim()).filter(Boolean);
+  try{ await api.saveCongress(c);
+    const toMove=sessionsAll().filter(s=>moves[s.day]); for(const s of toMove){ const n=Object.assign(clone(s),{day:moves[s.day]}); await api.saveSession(n,s.version); }
+    await reload(); toast("Configuration enregistrée"+(toMove.length?` · ${toMove.length} activité(s) déplacée(s) vers la nouvelle date`:"")+"."); }catch(err){ toast(err.message); }
+}
+
+/* ======================= Démarrage ======================= */
+(async()=>{
+  if(!LIVE) await api._boot();
+  const h=(location.hash||"").replace("#","");
+  if(h==="admin") S.mode="admin";
+  await loadPublic();
+  if(S.mode==="admin"&&S.token){ try{ S.data=await api.getState(); recompute(); }catch(e){ S.token=null; ss.set("fapprog_auth",null); } }
+  if(window.innerWidth<720) S.pubView="chrono";
+  render();
+})();
+window.addEventListener("resize",()=>{ clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(S.mode==="public"&&S.pubView==="grille") render(); },250); });
+</script>

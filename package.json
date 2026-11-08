@@ -1,0 +1,9 @@
+{
+  "name": "fap-programme-scientifique",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plateforme de gestion du programme scientifique – Fédération Algérienne de Pharmacie (phase 1)",
+  "dependencies": {
+    "@upstash/redis": "1.34.3"
+  }
+}
