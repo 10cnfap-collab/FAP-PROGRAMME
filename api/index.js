@@ -9,6 +9,7 @@
  *   ADMIN_PASSWORD   mot de passe de l'administration (obligatoire)
  *   SESSION_SECRET   clé de signature des sessions (recommandé)
  *   KV_REST_API_URL / KV_REST_API_TOKEN  (ou UPSTASH_REDIS_REST_URL / _TOKEN) — ajoutées par Vercel › Storage
+ *   PROPOSAL_CODE    code d'accès facultatif pour le formulaire des présidents de section
  *   DB_PREFIX        préfixe des clés (défaut : prog10). Permet de partager la base Upstash avec la plateforme des résumés.
  */
 const crypto = require('crypto');
@@ -16,7 +17,7 @@ const { Redis } = require('@upstash/redis');
 const PROG = require('../lib/programme.js');
 
 const NS = process.env.DB_PREFIX || 'prog10';
-const K = { congress: `${NS}:congress`, sessions: `${NS}:sessions`, persons: `${NS}:persons`, audit: `${NS}:audit`, seq: `${NS}:seq:` };
+const K = { congress: `${NS}:congress`, sessions: `${NS}:sessions`, persons: `${NS}:persons`, proposals: `${NS}:proposals`, audit: `${NS}:audit`, seq: `${NS}:seq:` };
 class UserError extends Error {}
 const fail = m => { throw new UserError(m); };
 
@@ -44,6 +45,10 @@ const store = {
   getPerson: async id => parse(await db().hget(K.persons, id)),
   putPerson: async p => { await db().hset(K.persons, { [p.id]: JSON.stringify(p) }); },
   delPerson: async id => { await db().hdel(K.persons, id); },
+  proposals: () => hAll(K.proposals),
+  getProposal: async id => parse(await db().hget(K.proposals, id)),
+  putProposal: async p => { await db().hset(K.proposals, { [p.id]: JSON.stringify(p) }); },
+  delProposal: async id => { await db().hdel(K.proposals, id); },
   audit: async n => ((await db().lrange(K.audit, 0, (n || 300) - 1)) || []).map(parse).filter(Boolean),
   addAudit: async e => { await db().lpush(K.audit, JSON.stringify(e)); await db().ltrim(K.audit, 0, 4999); },
   nextId: async kind => kind + String(await db().incr(K.seq + kind)).padStart(3, '0'),
@@ -71,7 +76,13 @@ async function rateLimit(ip, bucket, max, sec) {
 }
 
 const PUBLIC = {
-  getPublic: () => svc.getPublic(),
+  getPublic: async () => { const d = await svc.getPublic(); d.congress.codeRequired = !!process.env.PROPOSAL_CODE; return d; },
+  submitProposal: async (ctx, input, code) => {
+    await rateLimit(ctx.ip, 'prop', 20, 3600);
+    const real = process.env.PROPOSAL_CODE;
+    if (real) { const h = x => crypto.createHash('sha256').update(String(x || '').trim()).digest(); if (!crypto.timingSafeEqual(h(code), h(real))) fail('Code d\'accès incorrect. Il vous a été communiqué par la FAP.'); }
+    return svc.submitProposal(input);
+  },
   login: async (ctx, pw, name) => {
     const real = process.env.ADMIN_PASSWORD;
     if (!real) fail('Mot de passe administrateur non configuré (variable ADMIN_PASSWORD).');
@@ -96,6 +107,9 @@ const ADMIN = {
   mergePersons: (a, k, d) => svc.mergePersons(a, k, d),
   swapSessions: (a, x, y, v, f) => svc.swapSessions(a, x, y, v, f),
   renumber: (a) => svc.renumber(a),
+  setProposalStatus: (a, id, st, note) => svc.setProposalStatus(a, id, st, note),
+  deleteProposal: (a, id) => svc.deleteProposal(a, id),
+  importProposal: (a, id, target) => svc.importProposal(a, id, target),
   seedDemo: (a) => svc.seedDemo(a),
   clearProgramme: (a) => svc.clearProgramme(a)
 };
