@@ -1,0 +1,24 @@
+{
+  "id": "/",
+  "name": "Programme · 10e Congrès FAP",
+  "short_name": "Congrès FAP",
+  "description": "Programme scientifique du 10e Congrès de la Fédération Algérienne de Pharmacie — 22 et 23 décembre 2026, Alger.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/?app=1#programme",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e9f2fa",
+  "theme_color": "#0e87ce",
+  "categories": ["medical", "education", "events"],
+  "icons": [
+    { "src": "/assets/app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Programme", "url": "/?app=1#programme", "icons": [{ "src": "/assets/app/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Proposer une session", "url": "/?app=1#proposer", "icons": [{ "src": "/assets/app/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
