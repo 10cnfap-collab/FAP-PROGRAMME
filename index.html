@@ -237,6 +237,20 @@ tr.clk{cursor:pointer} tr.clk:hover td{background:var(--grid)}
 @media (max-width:620px){.swapgrid{grid-template-columns:1fr}.swapgrid .arrow{transform:rotate(90deg);justify-self:center}}
 .swapgrid .slot{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface)}
 .swapgrid .arrow{align-self:center;font-size:22px;color:var(--royal)}
+.pf-person{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.pf-person .ph{display:flex;align-items:center;gap:8px}
+.pf-person .ph b{font-size:13.5px}
+.pf-lect{border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pf-type{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:620px){.pf-type{grid-template-columns:1fr}}
+.pf-type label{border:1.5px solid var(--line);border-radius:8px;padding:12px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;background:var(--surface)}
+.pf-type label:has(input:checked){border-color:var(--royal);background:var(--soft)}
+.pf-type input{accent-color:var(--royal);margin-top:3px}
+.sec-head{background:var(--fap);color:#fff;border-radius:8px 8px 0 0;padding:7px 20px;font-size:13px;font-weight:500;align-self:flex-start;margin-bottom:-12px}
+.card.sec{border-top-left-radius:0}
+.ppl{display:flex;flex-direction:column;gap:2px;padding:6px 0;border-top:1px solid var(--line);font-size:13.5px}
+.tag-known{font-size:11px;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:99px;padding:1px 7px}
+.tag-new{font-size:11px;font-weight:600;color:var(--royal);background:var(--soft);border-radius:99px;padding:1px 7px}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:90;font-size:13.5px;max-width:calc(100% - 32px)}
 @media (max-width:640px){.mast{position:static}.brand span{display:none}.hero{padding:18px 16px}.modes button{padding:12px 8px}.card{padding:16px}.pitem{grid-template-columns:1fr;gap:4px}}
 </style>
@@ -250,6 +264,7 @@ tr.clk{cursor:pointer} tr.clk:hover td{background:var(--grid)}
     <span class="demo" id="demoBadge" hidden>DÉMONSTRATION · données fictives</span>
     <nav class="modes" aria-label="Espace">
       <button id="m-public" data-act="mode" data-v="public">Programme public</button>
+      <button id="m-propose" data-act="mode" data-v="proposer">Proposer une session</button>
       <button id="m-admin" data-act="mode" data-v="admin">Administration</button>
     </nav>
   </div>
@@ -292,7 +307,9 @@ if(LIVE){
     persons:async()=>Object.values(coll("persons")).map(clone), getPerson:async id=>{ const x=coll("persons")[id]; return x?clone(x):null; },
     putPerson:async p=>{ const c=coll("persons"); c[p.id]=clone(p); ls.set("persons",c); }, delPerson:async id=>{ const c=coll("persons"); delete c[id]; ls.set("persons",c); },
     audit:async n=>(ls.get("audit")||[]).slice(0,n), addAudit:async e=>{ const a=ls.get("audit")||[]; a.unshift(e); ls.set("audit",a.slice(0,1000)); },
-    nextId:async k=>{ const q=ls.get("seq")||{S:1,P:1}; const id=k+String(q[k]++).padStart(3,"0"); ls.set("seq",q); return id; },
+    nextId:async k=>{ const q=ls.get("seq")||{S:1,P:1}; q[k]=q[k]||1; const id=k+String(q[k]++).padStart(3,"0"); ls.set("seq",q); return id; },
+    proposals:async()=>Object.values(coll("proposals")).map(clone), getProposal:async id=>{ const x=coll("proposals")[id]; return x?clone(x):null; },
+    putProposal:async p=>{ const c=coll("proposals"); c[p.id]=clone(p); ls.set("proposals",c); }, delProposal:async id=>{ const c=coll("proposals"); delete c[id]; ls.set("proposals",c); },
     setSeq:async(s,p)=>ls.set("seq",{S:s,P:p})
   };
   const svc=P.createService(store);
@@ -304,7 +321,8 @@ if(LIVE){
     saveCongress:c=>svc.saveCongress(actor(),c), saveSession:(s,v)=>svc.saveSession(actor(),s,v), importSessions:l=>svc.importSessions(actor(),l),
     deleteSession:id=>svc.deleteSession(actor(),id), setStatus:(id,st)=>svc.setStatus(actor(),id,st), setVisible:(id,v)=>svc.setVisible(actor(),id,v),
     publishMany:ids=>svc.publishMany(actor(),ids), savePerson:p=>svc.savePerson(actor(),p), deletePerson:id=>svc.deletePerson(actor(),id),
-    mergePersons:(a,b)=>svc.mergePersons(actor(),a,b), swapSessions:(a,b,v,f)=>svc.swapSessions(actor(),a,b,v,f), renumber:()=>svc.renumber(actor()), seedDemo:()=>svc.seedDemo(actor()), clearProgramme:()=>svc.clearProgramme(actor())
+    mergePersons:(a,b)=>svc.mergePersons(actor(),a,b), swapSessions:(a,b,v,f)=>svc.swapSessions(actor(),a,b,v,f),
+    submitProposal:(p)=>svc.submitProposal(p), setProposalStatus:(id,st,n)=>svc.setProposalStatus(actor(),id,st,n), deleteProposal:id=>svc.deleteProposal(actor(),id), importProposal:(id,t)=>svc.importProposal(actor(),id,t), renumber:()=>svc.renumber(actor()), seedDemo:()=>svc.seedDemo(actor()), clearProgramme:()=>svc.clearProgramme(actor())
   };
   api._boot=async()=>{ if(!(await store.sessions()).length && !ls.get("seeded")){ await svc.seedDemo("Démonstration"); ls.set("seeded",true); } };
 }
@@ -324,9 +342,10 @@ const crit=id=>(BYS[id]||[]).filter(i=>i.level==="critique");
 function render(){
   $("#m-public").setAttribute("aria-current",String(S.mode==="public"));
   $("#m-admin").setAttribute("aria-current",String(S.mode==="admin"));
+  $("#m-propose").setAttribute("aria-current",String(S.mode==="proposer"));
   $("#demoBadge").hidden=LIVE;
   const c=C(); $("#brandName").textContent=c.short?("Programme · "+c.short):"Programme scientifique";
-  $("#app").innerHTML = S.mode==="public" ? viewPublic() : (S.token&&S.data ? viewAdmin() : viewLogin());
+  $("#app").innerHTML = S.mode==="public" ? viewPublic() : S.mode==="proposer" ? viewPropose() : (S.token&&S.data ? viewAdmin() : viewLogin());
   after();
 }
 function after(){ if(S.mode==="admin"&&S.tab==="builder"&&S.data) bindGrid(); placeNow(); }
@@ -397,6 +416,129 @@ function pubPersonModal(id){ const items=[]; let person=null; pubSessions().forE
   modal(`<div class="card"><span class="eyebrow">Intervenant</span><h2 style="font-family:var(--f-display);font-size:24px;font-weight:600;margin:4px 0">${esc(person.name)}</h2><div class="muted">${esc([person.institution,person.country].filter(Boolean).join(" · "))}</div>${person.specialties?`<div class="small" style="margin-top:4px">${esc(person.specialties)}</div>`:""}${person.bio?`<p>${esc(person.bio)}</p>`:""}</div>
     ${plist(items.map(i=>i.s),true)}<div class="row"><span class="spacer"></span><button class="btn ghost" data-act="close">Fermer</button></div>`); }
 
+/* ======================= Formulaire des présidents de section ======================= */
+const newProps=()=>(S.data&&S.data.proposals||[]).filter(p=>p.status==="nouvelle").length;
+const blankP=()=>({title:"Dr",firstName:"",lastName:"",func:"",institution:"",city:"",country:"Algérie",email:"",phone:""});
+function blankForm(){ return {section:"",code:"",president:Object.assign(blankP(),{whatsapp:""}),type:"lectures",title:"",theme:"",description:"",preferredDay:"",preferredPeriod:"",comment:"",
+  moderators:[blankP()],lectures:[1,2,3].map(()=>({title:"",duration:20,speaker:blankP()})),discussion:30,panelists:[blankP(),blankP(),blankP()],facilitators:[blankP()],instructors:[],objectives:"",audience:"",capacity:""}; }
+S.pf=ss.get("fapprog_proposal_draft")||blankForm();
+const savePF=()=>ss.set("fapprog_proposal_draft",S.pf);
+function pfGet(path){ return path.split(".").reduce((o,k)=>o==null?o:o[k],S.pf); }
+function pfSet(path,v){ const k=path.split("."); let o=S.pf; for(let i=0;i<k.length-1;i++) o=o[k[i]]; o[k[k.length-1]]=v; }
+function pfField(path,label,o){ o=o||{}; const v=pfGet(path)??"", id="pf-"+path.replace(/\./g,"-");
+  if(o.type==="area") return `<div style="grid-column:1/-1"><label class="lbl" for="${id}">${label}${o.req?' <span class="req">*</span>':""}</label><textarea class="ta" id="${id}" data-pf="${path}" rows="${o.rows||3}">${esc(v)}</textarea>${o.help?`<div class="small muted" style="margin-top:3px">${esc(o.help)}</div>`:""}</div>`;
+  if(o.type==="select") return `<div><label class="lbl" for="${id}">${label}${o.req?' <span class="req">*</span>':""}</label><select class="sel" id="${id}" data-pf="${path}">${o.options.map(x=>{ const [val,lab]=Array.isArray(x)?x:[x,x]; return `<option value="${esc(val)}"${String(v)===String(val)?" selected":""}>${esc(lab)}</option>`; }).join("")}</select></div>`;
+  return `<div${o.wide?' style="grid-column:1/-1"':""}><label class="lbl" for="${id}">${label}${o.req?' <span class="req">*</span>':""}</label><input class="in" id="${id}" data-pf="${path}" type="${o.type||"text"}" value="${esc(v)}"${o.list?` list="${o.list}"`:""}${o.ph?` placeholder="${esc(o.ph)}"`:""}></div>`; }
+function pfPerson(path,label,removable,needEmail){
+  return `<div class="pf-person"><div class="ph"><b>${esc(label)}</b><span class="spacer"></span>${removable?`<button type="button" class="btn subtle sm" data-act="pf-del" data-v="${path}" style="color:var(--crit)">Retirer</button>`:""}</div>
+    <div class="fgrid">${pfField(path+".title","Titre",{type:"select",options:P.TITLES})}${pfField(path+".firstName","Prénom",{req:1})}${pfField(path+".lastName","Nom",{req:1})}</div>
+    <div class="fgrid">${pfField(path+".institution","Établissement",{req:1})}${pfField(path+".city","Ville")}${pfField(path+".func","Fonction",{ph:"Ex. : Professeur, pharmacien hospitalier…"})}</div>
+    <div class="fgrid">${pfField(path+".email","E-mail",{type:"email",req:needEmail})}${pfField(path+".phone","Téléphone",{type:"tel",req:needEmail})}${path==="president"?pfField("president.whatsapp","Joignable sur WhatsApp ?",{type:"select",options:[["","—"],["Oui","Oui"],["Non","Non"]]}):""}</div></div>`; }
+function viewPropose(){
+  const c=(S.pub&&S.pub.congress)||C(), f=S.pf, open=c.proposalsOpen!==false;
+  if(S.pfDone) return `<div class="wrap" style="max-width:820px"><div class="card head stack"><span class="eyebrow">Proposition enregistrée</span><h1 class="h1">Merci, votre proposition a bien été reçue</h1>
+    <p style="margin:0">Référence : <b class="code lg">${esc(S.pfDone)}</b></p><p class="muted" style="margin:0">Le comité scientifique l'examinera et l'intégrera au programme du ${esc(c.short)}. Conservez la référence pour toute correspondance.</p>
+    <div class="row"><button class="btn" data-act="pf-new">Proposer une autre session</button><button class="btn ghost" data-act="mode" data-v="public">Voir le programme</button></div></div></div>`;
+  const tot=(f.lectures||[]).reduce((t,l)=>t+(+l.duration||0),0)+(+f.discussion||0);
+  const roleBlock= f.type==="lectures"?`
+      <div class="card sec stack"><h3 style="font-size:17px">Modération</h3><p class="small muted" style="margin:0">Un à trois modérateurs.</p>
+        ${f.moderators.map((m,i)=>pfPerson("moderators."+i,"Modérateur "+(i+1),f.moderators.length>1)).join("")}
+        ${f.moderators.length<3?`<button type="button" class="btn ghost sm" data-act="pf-add" data-v="moderators" style="align-self:flex-start">+ Ajouter un modérateur</button>`:""}</div>
+      <div class="card stack"><div class="row"><h3 style="font-size:17px">Conférences</h3><span class="spacer"></span><span class="mono small ${tot>90?"issue-c":"muted"}">${tot} / 90 min</span></div>
+        <p class="small muted" style="margin:0">Format standard : 3 conférences de 20 minutes et 30 minutes de discussion générale.</p>
+        ${f.lectures.map((l,i)=>`<div class="pf-lect"><div class="row"><b>Conférence ${i+1}</b><span class="spacer"></span>${f.lectures.length>1?`<button type="button" class="btn subtle sm" data-act="pf-del" data-v="lectures.${i}" style="color:var(--crit)">Retirer</button>`:""}</div>
+          <div class="fgrid">${pfField("lectures."+i+".title","Titre de la conférence",{req:1,wide:1})}${pfField("lectures."+i+".duration","Durée (min)",{type:"number"})}</div>
+          ${pfPerson("lectures."+i+".speaker","Orateur",false)}</div>`).join("")}
+        <div class="row">${f.lectures.length<6?`<button type="button" class="btn ghost sm" data-act="pf-add" data-v="lectures">+ Ajouter une conférence</button>`:""}<span class="spacer"></span><label class="lbl" for="pf-discussion" style="margin:0">Discussion générale (min)</label><input class="in mono" id="pf-discussion" data-pf="discussion" type="number" value="${esc(f.discussion)}" style="width:90px"></div></div>`
+   : f.type==="panel"?`
+      <div class="card sec stack"><h3 style="font-size:17px">Modération</h3>${f.moderators.map((m,i)=>pfPerson("moderators."+i,"Modérateur "+(i+1),f.moderators.length>1)).join("")}
+        ${f.moderators.length<3?`<button type="button" class="btn ghost sm" data-act="pf-add" data-v="moderators" style="align-self:flex-start">+ Ajouter un modérateur</button>`:""}</div>
+      <div class="card stack"><h3 style="font-size:17px">Panélistes</h3>${f.panelists.map((m,i)=>pfPerson("panelists."+i,"Panéliste "+(i+1),f.panelists.length>1)).join("")}
+        ${f.panelists.length<8?`<button type="button" class="btn ghost sm" data-act="pf-add" data-v="panelists" style="align-self:flex-start">+ Ajouter un panéliste</button>`:""}</div>`
+   :`
+      <div class="card sec stack"><h3 style="font-size:17px">Animation</h3>${f.facilitators.map((m,i)=>pfPerson("facilitators."+i,"Animateur "+(i+1),f.facilitators.length>1)).join("")}
+        ${f.facilitators.length<4?`<button type="button" class="btn ghost sm" data-act="pf-add" data-v="facilitators" style="align-self:flex-start">+ Ajouter un animateur</button>`:""}
+        ${f.instructors.map((m,i)=>pfPerson("instructors."+i,"Formateur "+(i+1),true)).join("")}
+        <button type="button" class="btn ghost sm" data-act="pf-add" data-v="instructors" style="align-self:flex-start">+ Ajouter un formateur</button></div>
+      <div class="card stack"><h3 style="font-size:17px">Contenu de l'atelier</h3><div class="fgrid">${pfField("objectives","Objectifs pédagogiques",{type:"area"})}${pfField("audience","Public cible")}${pfField("capacity","Nombre maximal de participants",{type:"number"})}</div></div>`;
+  return `<div class="wrap stack" style="max-width:820px">
+   <div class="card head stack"><span class="eyebrow">Espace des présidents de section</span><h1 class="h1">Proposer une session scientifique</h1>
+     <p style="margin:0">Ce formulaire permet aux présidents de section de la FAP de proposer une session pour le ${esc(c.name)} (${esc(fmtDay(c.days[0].date,{day:"numeric"}))}–${esc(fmtDay(c.days[c.days.length-1].date,{day:"numeric",month:"long",year:"numeric"}))}). Indiquez le format, le titre, les modérateurs et les intervenants. Le comité scientifique placera ensuite la session dans le programme.</p>
+     ${open?"":`<div class="notice crit"><b>Le dépôt des propositions est clos.</b></div>`}
+     <p class="small" style="margin:0;color:var(--crit)">* Champ obligatoire</p></div>
+   <span class="sec-head">1 · Section et président</span>
+   <div class="card sec stack"><div class="fgrid">${c.sections&&c.sections.length?pfField("section","Section",{type:"select",req:1,options:[["","Choisir…"]].concat(c.sections)}):pfField("section","Section FAP (wilaya ou région)",{req:1,ph:"Ex. : Section d'Oran"})}
+     ${c.codeRequired?pfField("code","Code d'accès",{req:1,ph:"Communiqué par la FAP"}):""}</div>${pfPerson("president","Président(e) de section",false,true)}</div>
+   <span class="sec-head">2 · La session</span>
+   <div class="card sec stack"><div><span class="lbl">Format <span class="req">*</span></span><div class="pf-type">${[["lectures","Session de conférences","3 conférences + discussion · 90 min"],["panel","Panel","Table ronde avec panélistes · 90 min"],["workshop","Atelier","Atelier pratique · 90 min"]].map(([k,l,d])=>`<label><input type="radio" name="pf-type" value="${k}"${f.type===k?" checked":""}><span><b>${l}</b><br><span class="small muted">${d}</span></span></label>`).join("")}</div></div>
+     <div class="fgrid">${pfField("title","Titre de la session",{req:1,wide:1})}${pfField("theme","Thème scientifique",{type:"select",options:[["","—"]].concat(c.themes||[])})}
+       ${pfField("preferredDay","Jour souhaité",{type:"select",options:[["","Indifférent"]].concat(c.days.map(d=>[d.date,d.label+" · "+fmtDay(d.date,{weekday:"long",day:"numeric",month:"long"})]))})}
+       ${pfField("preferredPeriod","Moment souhaité",{type:"select",options:[["","Indifférent"],["matin","Matinée"],["apres-midi","Après-midi"]]})}
+       ${pfField("description","Présentation de la session",{type:"area",rows:3,help:"Objectif et intérêt de la session, en quelques lignes."})}</div></div>
+   <span class="sec-head">3 · Intervenants</span>
+   ${roleBlock}
+   <div class="card stack"><div class="fgrid">${pfField("comment","Commentaire pour le comité (facultatif)",{type:"area",rows:2})}</div></div>
+   <div id="pf-err"></div>
+   <div class="row"><button class="btn" data-act="pf-send"${open?"":" disabled"}>Envoyer la proposition</button><button class="btn subtle" data-act="pf-reset">Effacer le formulaire</button></div></div>`;
+}
+
+/* ---- Administration : propositions ---- */
+function knownPerson(x){ const pm=S.data.persons||[]; const n=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z]/g,"");
+  return pm.find(p=>(x.email&&p.email&&p.email.toLowerCase()===x.email.toLowerCase())||(n(p.firstName)===n(x.firstName)&&n(p.lastName)===n(x.lastName))); }
+function propPeople(pr){ const out=[]; (pr.moderators||[]).forEach(p=>out.push(["Modérateur",p])); (pr.lectures||[]).forEach((l,i)=>out.push(["Orateur · conf. "+(i+1),l.speaker,l.title]));
+  (pr.panelists||[]).forEach(p=>out.push(["Panéliste",p])); (pr.facilitators||[]).forEach(p=>out.push(["Animateur",p])); (pr.instructors||[]).forEach(p=>out.push(["Formateur",p])); return out; }
+const propPill=st=>`<span class="pill ${st==="importee"?"st-publie":st==="refusee"?"st-annule":"st-a_valider"}">${esc(P.PROPOSAL_STATUS[st]||st)}</span>`;
+function aProposals(){
+  const L=(S.data.proposals||[]).filter(p=>!S.propFilter||p.status===S.propFilter), all=S.data.proposals||[], cnt=k=>all.filter(p=>p.status===k).length;
+  const link=location.href.split("#")[0]+"#proposer";
+  return `<div class="row"><div><span class="eyebrow">Présidents de section</span><h1 class="h1">Propositions de sessions</h1></div><span class="spacer"></span>
+     <label class="switch"><input type="checkbox" id="prop-open"${C().proposalsOpen!==false?" checked":""}> Formulaire ouvert</label></div>
+   <div class="notice info row"><span>Lien à envoyer aux présidents de section :</span><b class="mono" style="overflow-wrap:anywhere">${esc(link)}</b><button class="btn ghost sm" data-act="copylink" data-v="${esc(link)}">Copier</button></div>
+   <div class="kpis"><button class="kpi" data-act="propf" data-v=""><b>${all.length}</b><span>Propositions reçues</span></button><button class="kpi warn" data-act="propf" data-v="nouvelle"><b>${cnt("nouvelle")}</b><span>À traiter</span></button>
+     <button class="kpi" data-act="propf" data-v="importee"><b>${cnt("importee")}</b><span>Importées au programme</span></button><button class="kpi" data-act="propf" data-v="refusee"><b>${cnt("refusee")}</b><span>Non retenues</span></button></div>
+   <details class="card"><summary style="cursor:pointer;font-weight:600">Liste des sections FAP (${(C().sections||[]).length}) <span class="small muted" style="font-weight:400">— facultatif : si elle est remplie, les présidents choisissent leur section dans une liste</span></summary>
+     <div class="stack" style="margin-top:10px"><textarea class="ta" id="sec-list" rows="6" placeholder="Une section par ligne, ex. :&#10;Section d'Alger&#10;Section d'Oran">${esc((C().sections||[]).join("\n"))}</textarea>
+     <div><button class="btn sm" data-act="savesections">Enregistrer la liste</button></div></div></details>
+   <div class="tw"><table><thead><tr><th>Réf.</th><th>Reçue le</th><th>Section</th><th>Session proposée</th><th>Intervenants</th><th>Souhait</th><th>Statut</th></tr></thead><tbody>
+   ${L.map(pr=>{ const ppl=propPeople(pr), known=ppl.filter(x=>knownPerson(x[1])).length, sess=pr.sessionId&&sessionsAll().find(s=>s.id===pr.sessionId);
+     return `<tr class="clk" data-act="openprop" data-v="${esc(pr.id)}"><td class="mono small">${esc(pr.id)}</td><td class="small mono">${esc(fmtAt(pr.createdAt))}</td><td><b>${esc(pr.section)}</b><div class="small muted">${esc(P.displayName(pr.president))}</div></td>
+     <td class="k-${pr.type}"><span class="ty" style="color:var(--accent)">${esc(P.TYPES[pr.type].label)}</span><div><b>${esc(pr.title)}</b></div>${pr.theme?`<div class="small muted">${esc(pr.theme)}</div>`:""}</td>
+     <td class="small">${ppl.length} personne(s)<div class="muted">${known} déjà dans l'annuaire</div></td><td class="small">${esc(pr.preferredDay?fmtDay(pr.preferredDay,{weekday:"short",day:"numeric"}):"—")}${pr.preferredPeriod?" · "+(pr.preferredPeriod==="matin"?"matin":"après-midi"):""}</td>
+     <td>${propPill(pr.status)}${sess?`<div style="margin-top:4px">${codeTag(sess)} <span class="small muted">${esc(sess.start)} · ${esc(roomName(sess.roomId))}</span></div>`:""}</td></tr>`; }).join("")||`<tr><td colspan="7" class="empty">Aucune proposition${S.propFilter?" avec ce statut":""}. Envoyez le lien ci-dessus aux présidents de section.</td></tr>`}
+   </tbody></table></div>`;
+}
+function propDrawer(id){
+  const pr=(S.data.proposals||[]).find(p=>p.id===id); if(!pr) return;
+  const slots=P.emptySlots(S.data).filter(s=>s.type===pr.type||s.type==="lectures");
+  const pref=slots.filter(s=>(!pr.preferredDay||s.day===pr.preferredDay)&&(!pr.preferredPeriod||(pr.preferredPeriod==="matin"?P.toMin(s.start)<13*60:P.toMin(s.start)>=13*60)));
+  const others=slots.filter(s=>!pref.includes(s)), sess=pr.sessionId&&sessionsAll().find(s=>s.id===pr.sessionId);
+  const opt=s=>`<option value="${esc(s.id)}">${esc(P.codeOf(s)||"—")} · ${esc(fmtDay(s.day,{weekday:"short",day:"numeric",month:"short"}))} · ${esc(s.start)}–${esc(s.end)} · ${esc(roomName(s.roomId))}</option>`;
+  const person=([role,x,extra])=>{ const k=knownPerson(x); return `<div class="ppl"><span class="small muted">${esc(role)}${extra?" · « "+esc(extra)+" »":""}</span><span><b>${esc(P.displayName(x))}</b> ${k?`<span class="tag-known">Déjà dans l'annuaire</span>`:`<span class="tag-new">Nouvelle fiche</span>`}</span><span class="small muted">${esc([x.institution,x.city].filter(Boolean).join(" · "))}${x.email?" · "+esc(x.email):""}${x.phone?" · "+esc(x.phone):""}</span></div>`; };
+  layer(`<div class="scrim" data-act="scrim"><aside class="drawer" role="dialog" aria-modal="true" aria-label="Proposition ${esc(pr.id)}">
+   <div class="dhead row"><span class="code lg">${esc(pr.id)}</span>${propPill(pr.status)}<span class="spacer"></span><button class="btn ghost sm" data-act="close">Fermer</button></div>
+   <div class="card stack k-${pr.type}" style="box-shadow:inset 4px 0 0 var(--accent)"><span class="ty" style="color:var(--accent)">${esc(P.TYPES[pr.type].label)}</span><h2 style="font-family:var(--f-display);font-size:21px;font-weight:600">${esc(pr.title)}</h2>
+     ${pr.theme?`<div class="small muted">${esc(pr.theme)}</div>`:""}${pr.description?`<p style="margin:0">${esc(pr.description)}</p>`:""}
+     <div class="small"><b>Souhait :</b> ${esc(pr.preferredDay?fmtDay(pr.preferredDay):"jour indifférent")}${pr.preferredPeriod?", "+(pr.preferredPeriod==="matin"?"matinée":"après-midi"):""}</div>
+     ${pr.type==="lectures"?`<div class="small"><b>Durées :</b> ${pr.lectures.map(l=>l.duration+" min").join(" + ")} + discussion ${pr.discussion} min</div>`:""}
+     ${pr.objectives?`<div class="small"><b>Objectifs :</b> ${esc(pr.objectives)}</div>`:""}${pr.comment?`<div class="notice info"><b>Commentaire :</b> ${esc(pr.comment)}</div>`:""}</div>
+   <div class="card"><b>${esc(/^section/i.test(pr.section)?pr.section:"Section "+pr.section)}</b><div class="small muted">Proposée le ${esc(fmtAt(pr.createdAt))} par ${esc(P.displayName(pr.president))} · ${esc(pr.president.email)} · ${esc(pr.president.phone)}${pr.president.whatsapp==="Oui"?` · <a class="wa" href="https://wa.me/${esc(String(pr.president.phone).replace(/\D/g,"").replace(/^0/,"213"))}" target="_blank" rel="noopener">WhatsApp</a>`:""}</div></div>
+   <div class="card"><b>Intervenants (${propPeople(pr).length})</b>${propPeople(pr).map(person).join("")}</div>
+   ${pr.status==="importee"&&sess?`<div class="notice ok">Importée le ${esc(fmtAt(pr.importedAt))} par ${esc(pr.importedBy)} dans ${codeTag(sess)} · ${esc(fmtDay(sess.day,{weekday:"short",day:"numeric"}))} ${esc(sess.start)} · ${esc(roomName(sess.roomId))}. <button class="btn subtle sm" data-act="edit" data-v="${esc(sess.id)}">Ouvrir la session</button></div>`:`
+   <div class="card stack"><h3 style="font-size:16px">Importer dans le programme</h3>
+     <div><label class="lbl" for="imp-slot">Créneau vide${pr.type!=="lectures"?" (la session prendra le format proposé)":""}</label><select class="sel" id="imp-slot"><option value="">— Choisir un créneau vide —</option>
+       ${pref.length?`<optgroup label="Correspondant au souhait">${pref.map(opt).join("")}</optgroup>`:""}${others.length?`<optgroup label="Autres créneaux vides">${others.map(opt).join("")}</optgroup>`:""}<option value="__new"${slots.length?"":" selected"}>Nouveau créneau (jour, salle, heure)…</option></select>
+       ${!slots.length?`<div class="small muted" style="margin-top:4px">Aucun créneau vide : générez la trame horaire dans le Constructeur, ou créez un nouveau créneau.</div>`:""}</div>
+     <div class="fgrid" id="imp-new" style="display:${slots.length?"none":"grid"}"><div><label class="lbl" for="imp-day">Jour</label><select class="sel" id="imp-day">${C().days.map(d=>`<option value="${d.date}"${d.date===pr.preferredDay?" selected":""}>${esc(d.label)} · ${esc(fmtDay(d.date,{day:"numeric",month:"short"}))}</option>`).join("")}</select></div>
+       <div><label class="lbl" for="imp-room">Salle</label><select class="sel" id="imp-room">${C().rooms.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join("")}</select></div>
+       <div><label class="lbl" for="imp-start">Début (90 min)</label><input class="in mono" type="time" step="300" id="imp-start" value="09:00"></div></div>
+     <p class="small muted" style="margin:0">Les intervenants sont rapprochés de l'annuaire (e-mail, puis prénom et nom) ; les autres fiches sont créées. La session passe en « En préparation » et les conflits sont contrôlés.</p>
+     <div class="row"><button class="btn" data-act="doimport" data-v="${esc(pr.id)}">Importer dans le programme</button>
+       ${pr.status==="refusee"?`<button class="btn ghost" data-act="propstatus" data-v="nouvelle" data-id="${esc(pr.id)}">Remettre à traiter</button>`:`<button class="btn ghost" data-act="propstatus" data-v="refusee" data-id="${esc(pr.id)}">Ne pas retenir</button>`}
+       <span class="spacer"></span><button class="btn subtle sm" data-act="delprop" data-v="${esc(pr.id)}" style="color:var(--crit)">Supprimer</button></div></div>`}
+  </aside></div>`);
+  const sel=$("#imp-slot"); if(sel) sel.addEventListener("change",()=>{ $("#imp-new").style.display=sel.value==="__new"?"grid":"none"; });
+}
+
 /* ======================= Grille horaire (commune) ======================= */
 function timeGrid(o){
   const c=o.mode==="public"?S.pub.congress:C();
@@ -437,7 +579,7 @@ function placeNow(){
 setInterval(()=>{ if(isCongressNow()) { if(S.mode==="public"&&!$(".scrim")) render(); else placeNow(); } },60000);
 
 /* ======================= Administration ======================= */
-const TABS=[["dash","Tableau de bord"],["builder","Constructeur"],["sessions","Sessions"],["people","Intervenants"],["symposia","Symposiums"],["audit","Journal"],["config","Configuration"]];
+const TABS=[["dash","Tableau de bord"],["builder","Constructeur"],["proposals","Propositions"],["sessions","Sessions"],["people","Intervenants"],["symposia","Symposiums"],["audit","Journal"],["config","Configuration"]];
 function viewLogin(){
   return `<div class="wrap" style="max-width:460px"><div class="card head stack" style="text-align:center"><span class="mark" style="width:64px;height:64px;display:block;margin:0 auto 4px"></span><span class="eyebrow">Espace d'administration</span><h1 class="h1">Programme scientifique</h1>
     <p class="muted" style="margin:0">Accès réservé au comité d'organisation.</p>
@@ -448,9 +590,9 @@ function viewLogin(){
 }
 function viewAdmin(){
   const nc=ISSUES.filter(i=>i.level==="critique").length;
-  return `<div class="wrap admin"><nav class="rail" aria-label="Administration">${TABS.map(([k,l])=>`<button data-act="tab" data-v="${k}" aria-current="${S.tab===k}">${l}${k==="builder"&&nc?`<span class="badge">${nc}</span>`:""}</button>`).join("")}
+  return `<div class="wrap admin"><nav class="rail" aria-label="Administration">${TABS.map(([k,l])=>`<button data-act="tab" data-v="${k}" aria-current="${S.tab===k}">${l}${k==="builder"&&nc?`<span class="badge">${nc}</span>`:""}${k==="proposals"&&newProps()?`<span class="badge" style="background:var(--royal)">${newProps()}</span>`:""}</button>`).join("")}
     <div class="who">Connecté : <b>${esc(S.actor)}</b><br><button class="btn subtle sm" data-act="logout" style="padding-left:0">Déconnexion</button></div></nav>
-    <div class="stack" style="min-width:0">${({dash:aDash,builder:aBuilder,sessions:aSessions,people:aPeople,symposia:aSymposia,audit:aAudit,config:aConfig})[S.tab]()}</div></div>`;
+    <div class="stack" style="min-width:0">${({dash:aDash,builder:aBuilder,proposals:aProposals,sessions:aSessions,people:aPeople,symposia:aSymposia,audit:aAudit,config:aConfig})[S.tab]()}</div></div>`;
 }
 const sessionsAll=()=>(S.data.sessions||[]);
 const sessionsActive=()=>sessionsAll().filter(s=>!P.INACTIVE.includes(s.status));
@@ -850,8 +992,8 @@ document.addEventListener("click",async e=>{
   if(a==="scrim"){ if(e.target===t) (t.classList.contains("stacked")?closeModal():closeAll()); return; }
   if(a==="ev"||a==="psession"){ if(S.mode==="public") pubSessionModal(v); return; }
   switch(a){
-    case "mode": S.mode=v; try{ history.replaceState(null,"","#"+(v==="admin"?"admin":"programme")); }catch(_){}
-      if(v==="public") await loadPublic(); else if(S.token&&!S.data) await reload(); render(); window.scrollTo(0,0); break;
+    case "mode": S.mode=v; if(v==="proposer") S.pfDone=null; try{ history.replaceState(null,"","#"+(v==="admin"?"admin":v==="proposer"?"proposer":"programme")); }catch(_){}
+      if(v==="public"||v==="proposer") await loadPublic(); else if(S.token&&!S.data) await reload(); render(); window.scrollTo(0,0); break;
     case "pview": S.pubView=v; render(); break;
     case "pday": S.pubDay=v; render(); break;
     case "proom": S.pubRoom=v; render(); break;
@@ -899,6 +1041,28 @@ document.addEventListener("click",async e=>{
     case "domerge": { const keep=$("input[name=keep]:checked").value, drop=keep===t.dataset.a?t.dataset.b:t.dataset.a; try{ await api.mergePersons(keep,drop); closeAll(); await reload(); toast("Fiches fusionnées."); }catch(err){ toast(err.message); } break; }
     /* liste */
     case "selclear": S.sel.clear(); render(); break;
+    /* formulaire président */
+    case "pf-add": { const k=v, list=pfGet(k); list.push(k==="lectures"?{title:"",duration:20,speaker:blankP()}:blankP()); savePF(); const y=window.scrollY; render(); window.scrollTo(0,y); break; }
+    case "pf-del": { const parts=v.split("."), i=+parts.pop(), list=pfGet(parts.join(".")); list.splice(i,1); savePF(); const y=window.scrollY; render(); window.scrollTo(0,y); break; }
+    case "pf-reset": if(!t.dataset.armed){ t.dataset.armed="1"; t.textContent="Confirmer l'effacement"; setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.textContent="Effacer le formulaire"; } },4000); return; } S.pf=blankForm(); savePF(); render(); break;
+    case "pf-new": S.pfDone=null; S.pf=blankForm(); savePF(); render(); window.scrollTo(0,0); break;
+    case "pf-send": { const f=clone(S.pf); ["moderators","panelists","facilitators","instructors"].forEach(k=>f[k]=(f[k]||[]).filter(p=>p.firstName||p.lastName||p.email));
+      if(f.type!=="lectures") f.lectures=[]; t.disabled=true; t.textContent="Envoi…";
+      try{ const r=await api.submitProposal(f,f.code); S.pfDone=r.id; S.pf=blankForm(); savePF(); render(); window.scrollTo(0,0); }
+      catch(err){ $("#pf-err").innerHTML=`<div class="notice crit">${esc(err.message)}</div>`; t.disabled=false; t.textContent="Envoyer la proposition"; } break; }
+    /* administration des propositions */
+    case "propf": S.propFilter=v; render(); break;
+    case "savesections": try{ const c=clone(C()); c.sections=$("#sec-list").value.split("\n").map(x=>x.trim()).filter(Boolean); await api.saveCongress(c); await reload(); render(); toast(c.sections.length+" section(s) enregistrée(s)."); }catch(err){ toast(err.message); } break;
+    case "openprop": propDrawer(v); break;
+    case "copylink": try{ await navigator.clipboard.writeText(v); toast("Lien copié."); }catch(_){ toast("Copiez le lien affiché."); } break;
+    case "propstatus": try{ const r=await api.setProposalStatus(t.dataset.id,v); Object.assign(S.data.proposals.find(p=>p.id===r.id),r); closeAll(); render(); toast("Proposition : "+P.PROPOSAL_STATUS[v]+"."); }catch(err){ toast(err.message); } break;
+    case "delprop": if(!t.dataset.armed){ t.dataset.armed="1"; t.textContent="Confirmer la suppression"; return; } try{ await api.deleteProposal(v); S.data.proposals=S.data.proposals.filter(p=>p.id!==v); closeAll(); render(); toast("Proposition supprimée."); }catch(err){ toast(err.message); } break;
+    case "doimport": { const slot=$("#imp-slot").value; if(!slot){ toast("Choisissez un créneau vide ou « Nouveau créneau »."); return; }
+      const target=slot==="__new"?{day:$("#imp-day").value,roomId:$("#imp-room").value,start:$("#imp-start").value}:{slotId:slot};
+      t.disabled=true; t.textContent="Import…";
+      try{ const r=await api.importProposal(v,target); await reload(); closeAll(); const cr=r.issues.filter(i=>i.level==="critique");
+        toast(`Importée dans ${P.codeOf(r.session)||"le programme"} · ${r.matched} intervenant(s) reconnu(s), ${r.created} fiche(s) créée(s)${cr.length?` · ⚠ ${cr.length} conflit(s) à résoudre`:""}.`,9000); openEditor(r.session.id); }
+      catch(err){ toast(err.message,8000); t.disabled=false; t.textContent="Importer dans le programme"; } break; }
     case "swap": { if(ED&&$(".drawer")){ readEditor(); if(JSON.stringify(ED.s)!==ED.orig){ const n=await saveEditor(true); if(!n) return; } } const a=t.dataset.a, b=t.dataset.b||""; ED=null; layer(""); swapModal(a,b); break; }
     case "doswap": { const A=sessionsAll().find(s=>s.id===t.dataset.a), B=sessionsAll().find(s=>s.id===t.dataset.b); t.disabled=true;
       try{ const r=await api.swapSessions(A.id,B.id,[A.version,B.version],!!t.dataset.force);
@@ -919,12 +1083,16 @@ document.addEventListener("click",async e=>{
   }
 });
 document.addEventListener("input",e=>{
+  if(e.target.dataset&&e.target.dataset.pf){ pfSet(e.target.dataset.pf,e.target.value); savePF(); if(e.target.dataset.pf==="discussion"||/\.duration$/.test(e.target.dataset.pf)){ const tot=(S.pf.lectures||[]).reduce((t,l)=>t+(+l.duration||0),0)+(+S.pf.discussion||0); const m=$(".mono.small.issue-c, .mono.small.muted"); if(m){ m.textContent=tot+" / 90 min"; m.className="mono small "+(tot>90?"issue-c":"muted"); } } return; }
   const id=e.target.id;
   if(id==="pq"){ S.q=e.target.value; const p=e.target.selectionStart; render(); const n=$("#pq"); n.focus(); n.setSelectionRange(p,p); }
   if(id==="fs-q"){ S.filt.q=e.target.value; const p=e.target.selectionStart; render(); const n=$("#fs-q"); n.focus(); n.setSelectionRange(p,p); }
   if(id==="pp-q"){ S.pq=e.target.value; const p=e.target.selectionStart; render(); const n=$("#pp-q"); n.focus(); n.setSelectionRange(p,p); }
 });
 document.addEventListener("change",e=>{
+  if(e.target.dataset&&e.target.dataset.pf&&e.target.tagName==="SELECT"){ pfSet(e.target.dataset.pf,e.target.value); savePF(); return; }
+  if(e.target.name==="pf-type"){ S.pf.type=e.target.value; savePF(); const y=window.scrollY; render(); window.scrollTo(0,y); return; }
+  if(e.target.id==="prop-open"){ (async()=>{ try{ const c=clone(C()); c.proposalsOpen=e.target.checked; await api.saveCongress(c); await reload(); toast(e.target.checked?"Formulaire ouvert aux présidents de section.":"Formulaire fermé."); }catch(err){ toast(err.message); } })(); return; }
   const id=e.target.id;
   const map={"f-status":"status","f-type":"type","fs-status":"status","fs-type":"type","fs-room":"room","fs-theme":"theme"};
   if(map[id]){ S.filt[map[id]]=e.target.value; render(); }
@@ -948,7 +1116,7 @@ async function saveConfig(){
 (async()=>{
   if(!LIVE) await api._boot();
   const h=(location.hash||"").replace("#","");
-  if(h==="admin") S.mode="admin";
+  if(h==="admin") S.mode="admin"; if(h==="proposer") S.mode="proposer";
   await loadPublic();
   if(S.mode==="admin"&&S.token){ try{ S.data=await api.getState(); recompute(); }catch(e){ S.token=null; ss.set("fapprog_auth",null); } }
   if(window.innerWidth<720) S.pubView="chrono";
